@@ -232,4 +232,12 @@ input[type="checkbox"]{
     width:90%;
   }
 
+  /* FIX OVERLAP MOBILE */
+
+  th:first-child,
+  td:first-child{
+    position:static;
+    background:white;
+  }
+
 }
