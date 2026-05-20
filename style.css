@@ -69,19 +69,24 @@ body{
   opacity:0.9;
 }
 
-/* TABLE */
+/* TABLE CONTAINER */
 
 .table-container{
   overflow:auto;
   padding:20px;
   flex:1;
+  display:flex;
+  justify-content:center;
 }
+
+/* TABLE */
 
 table{
   border-collapse:collapse;
   background:white;
   width:max-content;
   box-shadow:0 4px 20px rgba(0,0,0,0.05);
+  margin:auto;
 }
 
 th,
