@@ -37,19 +37,6 @@ body{
   flex-wrap:wrap;
 }
 
-.actions input{
-  padding:10px 14px;
-  border-radius:10px;
-  border:1px solid #cbd5e1;
-  outline:none;
-  min-width:220px;
-  font-size:14px;
-}
-
-.actions input:focus{
-  border-color:#2563eb;
-}
-
 .actions button{
   padding:10px 16px;
   border:none;
@@ -65,35 +52,27 @@ body{
   opacity:0.9;
 }
 
-/* ========================= */
-/* FIX UTAMA SCROLL TABLE    */
-/* ========================= */
-
+/* TABLE SCROLL FIX */
 .table-container{
   width:100%;
   overflow-x:auto;
   overflow-y:hidden;
   -webkit-overflow-scrolling:touch;
-
   padding:20px;
   flex:1;
-
   display:block;
 }
 
 table{
   border-collapse:collapse;
   background:white;
-
   width:max-content;
   min-width:100%;
-
   box-shadow:0 4px 20px rgba(0,0,0,0.05);
   margin:auto;
 }
 
-th,
-td{
+th, td{
   border:1px solid #cbd5e1;
   padding:8px;
   text-align:center;
@@ -118,44 +97,14 @@ td:first-child{
   position:sticky;
   left:0;
   z-index:2;
-  white-space:nowrap;
-  box-sizing:border-box;
 }
 
 .hk{
   background:#fef08a;
   font-weight:bold;
-  min-width:50px;
 }
 
-input[type="checkbox"]{
-  width:18px;
-  height:18px;
-  cursor:pointer;
-}
-
-.footer{
-  margin-top:auto;
-  width:100%;
-  box-sizing:border-box;
-  text-align:center;
-  padding:20px;
-  color:#64748b;
-  font-size:14px;
-  background:white;
-  border-top:1px solid #e2e8f0;
-}
-
-.footer a{
-  color:#2563eb;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-.footer a:hover{
-  text-decoration:underline;
-}
-
+/* MODAL */
 .modal{
   position:fixed;
   inset:0;
@@ -171,7 +120,6 @@ input[type="checkbox"]{
   padding:25px;
   border-radius:16px;
   width:320px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.15);
 }
 
 .modal-content h2{
@@ -179,6 +127,7 @@ input[type="checkbox"]{
   margin-bottom:15px;
 }
 
+.modal-content input,
 .modal-content select{
   width:100%;
   padding:12px;
@@ -215,50 +164,23 @@ input[type="checkbox"]{
   font-weight:bold;
 }
 
-/* scrollbar mobile */
-.table-container::-webkit-scrollbar{
-  height:6px;
-}
-
-.table-container::-webkit-scrollbar-thumb{
-  background:#cbd5e1;
-  border-radius:10px;
+.footer{
+  margin-top:auto;
+  text-align:center;
+  padding:20px;
+  color:#64748b;
+  background:white;
 }
 
 /* MOBILE */
 @media (max-width:768px){
 
-  .topbar{
-    align-items:flex-start;
-  }
-
-  .actions{
-    width:100%;
-  }
-
-  .actions input{
-    width:100%;
-    min-width:unset;
-  }
-
-  table{
-    font-size:12px;
-  }
-
-  th,
-  td{
-    padding:6px;
+  th:first-child,
+  td:first-child{
+    position:static;
   }
 
   .modal-content{
     width:90%;
-  }
-
-  /* FIX OVERLAP MOBILE */
-
-  th:first-child,
-  td:first-child{
-    position:static;
-    background:white;
   }
 }
