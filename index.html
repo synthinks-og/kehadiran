@@ -32,11 +32,16 @@
 
     <div class="actions">
 
-      <input
-        type="text"
-        id="newName"
-        placeholder="Tambah nama"
-      >
+<input
+  type="text"
+  id="newName"
+  placeholder="Tambah nama"
+  onkeydown="
+    if(event.key === 'Enter'){
+      addName()
+    }
+  "
+>
 
       <button onclick="addName()">
         Tambah
