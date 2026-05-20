@@ -20,7 +20,7 @@ function saveData() {
 
 }
 
-function login() {
+{
 
   const username =
     document.getElementById("username").value;
@@ -287,5 +287,6 @@ function exportExcel() {
     wb,
     "rekap-kehadiran.xlsx"
   );
+  renderTable();
 
 }
