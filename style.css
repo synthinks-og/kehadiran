@@ -1,3 +1,7 @@
+:root{
+  --name-column-width:auto;
+}
+
 body{
   margin:0;
   font-family:Arial, sans-serif;
@@ -77,7 +81,6 @@ table{
   border-collapse:collapse;
   background:white;
   width:max-content;
-  min-width:100%;
   box-shadow:0 4px 20px rgba(0,0,0,0.05);
 }
 
@@ -87,6 +90,7 @@ td{
   padding:8px;
   text-align:center;
   font-size:14px;
+  white-space:nowrap;
 }
 
 th{
@@ -100,7 +104,7 @@ th{
 
 th:first-child,
 td:first-child{
-  min-width:260px;
+  width:var(--name-column-width);
   text-align:left;
   padding-left:14px;
   font-weight:600;
@@ -108,6 +112,8 @@ td:first-child{
   position:sticky;
   left:0;
   z-index:2;
+  white-space:nowrap;
+  box-sizing:border-box;
 }
 
 /* HK */
