@@ -22,18 +22,7 @@
 
     <div class="actions">
 
-      <input
-        type="text"
-        id="newName"
-        placeholder="Masukan nama"
-        onkeydown="
-          if(event.key === 'Enter'){
-            addName()
-          }
-        "
-      >
-
-      <button onclick="addName()">
+      <button onclick="openAddModal()">
         Tambah
       </button>
 
@@ -54,11 +43,9 @@
     <table id="attendanceTable">
 
       <thead>
-
         <tr id="headerRow">
           <th>NAMA</th>
         </tr>
-
       </thead>
 
       <tbody id="tableBody"></tbody>
@@ -69,6 +56,35 @@
 
 </div>
 
+<!-- ================= ADD MODAL ================= -->
+<div id="addModal" class="modal">
+  <div class="modal-content">
+
+    <h2>Tambah Nama</h2>
+
+    <input
+      type="text"
+      id="addNameInput"
+      placeholder="Masukkan nama"
+      onkeydown="if(event.key==='Enter'){confirmAddName()}"
+    >
+
+    <div class="modal-actions">
+
+      <button class="cancel-btn" onclick="closeAddModal()">
+        Batal
+      </button>
+
+      <button class="delete-confirm-btn" onclick="confirmAddName()">
+        Simpan
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= DELETE MODAL ================= -->
 <div id="deleteModal" class="modal">
 
   <div class="modal-content">
