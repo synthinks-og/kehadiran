@@ -24,7 +24,6 @@ const db = getFirestore(app);
 const attendanceRef = doc(db, "attendance", "main");
 
 const dates = [];
-
 for (let i = 26; i <= 31; i++) dates.push(i);
 for (let i = 1; i <= 25; i++) dates.push(i);
 
@@ -44,20 +43,12 @@ async function saveData() {
   await setDoc(attendanceRef, { data: attendance });
 }
 
+/* ===== TABLE ===== */
+
 function renderTable() {
 
   const headerRow = document.getElementById("headerRow");
   const tableBody = document.getElementById("tableBody");
-
-  const longestNameLength = Math.max(
-    ...attendance.map(p => p.name.length),
-    10
-  );
-
-  document.documentElement.style.setProperty(
-    "--name-column-width",
-    `${longestNameLength}ch`
-  );
 
   headerRow.innerHTML = `<th>NAMA</th>`;
 
@@ -69,21 +60,17 @@ function renderTable() {
 
   tableBody.innerHTML = "";
 
-  attendance.forEach((person, i) => {
+  attendance.forEach((p, i) => {
 
     let row = `<tr>`;
-
-    row += `<td>${person.name}</td>`;
+    row += `<td>${p.name}</td>`;
 
     dates.forEach(date => {
-
-      const checked = person.records?.[date];
-
       row += `
         <td>
           <input type="checkbox"
-            ${checked ? "checked" : ""}
-            onchange="toggleAttendance(${i}, ${date}, this)"
+            ${p.records?.[date] ? "checked" : ""}
+            onchange="toggleAttendance(${i},${date},this)"
           >
         </td>
       `;
@@ -91,7 +78,7 @@ function renderTable() {
 
     row += `
       <td class="hk" id="hk-${i}">
-        ${getHK(person.records || {})}
+        ${getHK(p.records || {})}
       </td>
     `;
 
@@ -101,10 +88,9 @@ function renderTable() {
   });
 }
 
-window.toggleAttendance = async function(i, date, checkbox) {
-
+window.toggleAttendance = async function(i, date, el) {
   attendance[i].records = attendance[i].records || {};
-  attendance[i].records[date] = checkbox.checked;
+  attendance[i].records[date] = el.checked;
 
   document.getElementById(`hk-${i}`).innerText =
     getHK(attendance[i].records);
@@ -113,14 +99,18 @@ window.toggleAttendance = async function(i, date, checkbox) {
 };
 
 function getHK(records) {
-  return Object.values(records).filter(v => v).length;
+  return Object.values(records).filter(Boolean).length;
 }
 
-/* ================= ADD MODAL ================= */
+/* ===== ADD MODAL (FIXED) ===== */
 
 window.openAddModal = function () {
-  document.getElementById("addModal").style.display = "flex";
-  document.getElementById("addNameInput").value = "";
+  const m = document.getElementById("addModal");
+  const i = document.getElementById("addNameInput");
+
+  i.value = "";
+  m.style.display = "flex";
+  setTimeout(() => i.focus(), 100);
 };
 
 window.closeAddModal = function () {
@@ -147,10 +137,9 @@ window.confirmAddName = async function () {
   closeAddModal();
 };
 
-/* ================= DELETE MODAL ================= */
+/* ===== DELETE MODAL ===== */
 
 window.openDeleteModal = function () {
-
   const modal = document.getElementById("deleteModal");
   const select = document.getElementById("deleteSelect");
 
@@ -170,46 +159,40 @@ window.closeDeleteModal = function () {
 window.confirmDeleteName = async function () {
 
   const index = document.getElementById("deleteSelect").value;
-
   if (index === "") return;
 
-  attendance.splice(index, 1);
+  attendance.splice(index,1);
 
   await saveData();
   closeDeleteModal();
 };
 
-/* ================= EXPORT ================= */
+/* ===== EXPORT (unchanged simple version) ===== */
 
 window.exportExcel = function () {
 
   const data = [];
-
-  const activeDates = dates.filter(date =>
-    attendance.some(p => p.records?.[date])
+  const activeDates = dates.filter(d =>
+    attendance.some(p => p.records?.[d])
   );
 
-  const header = ["NAMA", ...activeDates.map(String), "HK"];
-
-  data.push(header);
+  data.push([
+    "NAMA",
+    ...activeDates.map(String),
+    "HK"
+  ]);
 
   attendance.forEach(p => {
-
-    const row = [p.name];
-
-    activeDates.forEach(date => {
-      row.push(p.records?.[date] ? "☑" : "");
-    });
-
-    row.push(getHK(p.records || {}));
-
-    data.push(row);
+    data.push([
+      p.name,
+      ...activeDates.map(d => p.records?.[d] ? "☑" : ""),
+      getHK(p.records || {})
+    ]);
   });
 
   const ws = XLSX.utils.aoa_to_sheet(data);
-
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Rekap");
 
+  XLSX.utils.book_append_sheet(wb, ws, "Rekap");
   XLSX.writeFile(wb, "rekap-kehadiran.xlsx");
 };
