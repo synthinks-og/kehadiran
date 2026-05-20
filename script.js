@@ -20,37 +20,6 @@ function saveData() {
 
 }
 
-{
-
-  const username =
-    document.getElementById("username").value;
-
-  const password =
-    document.getElementById("password").value;
-
-  if (
-    username === "admin" &&
-    password === "admin123"
-  ) {
-
-    document.getElementById(
-      "loginPage"
-    ).style.display = "none";
-
-    document.getElementById(
-      "app"
-    ).style.display = "block";
-
-    renderTable();
-
-  } else {
-
-    alert("Login gagal");
-
-  }
-
-}
-
 function renderTable() {
 
   const headerRow =
@@ -267,7 +236,7 @@ function exportExcel() {
     { wch: 30 },
 
     ...dates.map(() => ({
-      wch: 3
+      wch: 2.5
     })),
 
     { wch: 5 },
@@ -287,6 +256,7 @@ function exportExcel() {
     wb,
     "rekap-kehadiran.xlsx"
   );
-  renderTable();
 
 }
+
+renderTable();
