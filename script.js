@@ -8,8 +8,30 @@ for (let i = 1; i <= 25; i++) {
   dates.push(i);
 }
 
-let attendance =
-  JSON.parse(localStorage.getItem("attendance")) || [];
+let attendance = [];
+
+try {
+
+  attendance =
+    JSON.parse(
+      localStorage.getItem("attendance")
+    ) || [];
+
+} catch {
+
+  attendance = [];
+
+}
+
+attendance.forEach((person) => {
+
+  if (!person.records) {
+
+    person.records = {};
+
+  }
+
+});
 
 function saveData() {
 
@@ -121,8 +143,6 @@ function toggleAttendance(
     !attendance[personIndex].records[date];
 
   saveData();
-
-  renderTable();
 
 }
 
