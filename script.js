@@ -25,6 +25,7 @@ try {
 
 }
 
+// Fix data lama
 attendance.forEach((person) => {
 
   if (!person.records) {
@@ -151,6 +152,7 @@ function toggleAttendance(
 
   saveData();
 
+  // Update HK realtime
   document.getElementById(
     `hk-${personIndex}`
   ).innerText =
@@ -191,6 +193,7 @@ function addName() {
 
   });
 
+  // Urut abjad
   attendance.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
@@ -264,26 +267,31 @@ function exportExcel() {
 
   });
 
+  // SHEET
   const ws =
     XLSX.utils.aoa_to_sheet(data);
 
   // LEBAR KOLOM
   ws["!cols"] = [
 
+    // Nama
     { wch: 35 },
 
+    // Tanggal
     ...dates.map(() => ({
       wch: 4
     })),
 
-    { wch: 6 }
+    // HK
+    { wch: 5 }
 
   ];
 
-  // STYLE
+  // RANGE
   const range =
     XLSX.utils.decode_range(ws["!ref"]);
 
+  // STYLE
   for (
     let R = range.s.r;
     R <= range.e.r;
@@ -306,30 +314,6 @@ function exportExcel() {
 
       ws[cellAddress].s = {
 
-        border: {
-
-          top: {
-            style: "thin",
-            color: { rgb: "000000" }
-          },
-
-          bottom: {
-            style: "thin",
-            color: { rgb: "000000" }
-          },
-
-          left: {
-            style: "thin",
-            color: { rgb: "000000" }
-          },
-
-          right: {
-            style: "thin",
-            color: { rgb: "000000" }
-          }
-
-        },
-
         alignment: {
 
           horizontal: "center",
@@ -339,60 +323,37 @@ function exportExcel() {
 
       };
 
-      // Header biru
-      if (R === 0 && C !== dates.length + 1) {
-
-        ws[cellAddress].s.fill = {
-
-          fgColor: {
-            rgb: "9DC3E6"
-          }
-
-        };
-
-        ws[cellAddress].s.font = {
-
-          bold: true
-
-        };
-
-      }
-
-      // HK kuning
-      if (C === dates.length + 1) {
-
-        ws[cellAddress].s.fill = {
-
-          fgColor: {
-            rgb: "FFD966"
-          }
-
-        };
-
-        ws[cellAddress].s.font = {
-
-          bold: true
-
-        };
-
-      }
-
-      // Nama rata kiri
-      if (C === 0 && R !== 0) {
-
-        ws[cellAddress].s.alignment = {
-
-          horizontal: "left",
-          vertical: "center"
-
-        };
-
-      }
-
     }
 
   }
 
+  // Nama rata kiri
+  attendance.forEach((_, index) => {
+
+    const cell =
+      XLSX.utils.encode_cell({
+        r: index + 1,
+        c: 0
+      });
+
+    if (ws[cell]) {
+
+      ws[cell].s = {
+
+        alignment: {
+
+          horizontal: "left",
+          vertical: "center"
+
+        }
+
+      };
+
+    }
+
+  });
+
+  // Workbook
   const wb =
     XLSX.utils.book_new();
 
