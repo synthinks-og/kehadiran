@@ -65,18 +65,29 @@ body{
   opacity:0.9;
 }
 
+/* ========================= */
+/* FIX UTAMA SCROLL TABLE    */
+/* ========================= */
+
 .table-container{
-  overflow:auto;
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;
+
   padding:20px;
   flex:1;
-  display:flex;
-  justify-content:center;
+
+  display:block;
 }
 
 table{
   border-collapse:collapse;
   background:white;
+
   width:max-content;
+  min-width:100%;
+
   box-shadow:0 4px 20px rgba(0,0,0,0.05);
   margin:auto;
 }
@@ -204,6 +215,17 @@ input[type="checkbox"]{
   font-weight:bold;
 }
 
+/* scrollbar mobile */
+.table-container::-webkit-scrollbar{
+  height:6px;
+}
+
+.table-container::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:10px;
+}
+
+/* MOBILE */
 @media (max-width:768px){
 
   .topbar{
@@ -239,5 +261,4 @@ input[type="checkbox"]{
     position:static;
     background:white;
   }
-
 }
