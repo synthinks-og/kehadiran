@@ -1,11 +1,11 @@
 const dates = [];
 
-// Tanggal 26 → 31
+// 26 → 31
 for (let i = 26; i <= 31; i++) {
   dates.push(i);
 }
 
-// Tanggal 1 → 25
+// 1 → 25
 for (let i = 1; i <= 25; i++) {
   dates.push(i);
 }
@@ -25,7 +25,6 @@ try {
 
 }
 
-// Fix data lama rusak
 attendance.forEach((person) => {
 
   if (!person.records) {
@@ -94,7 +93,8 @@ function renderTable() {
             onchange="
               toggleAttendance(
                 ${personIndex},
-                ${date}
+                ${date},
+                this
               )
             "
           >
@@ -104,7 +104,10 @@ function renderTable() {
     });
 
     row += `
-      <td class="hk">
+      <td
+        class="hk"
+        id="hk-${personIndex}"
+      >
         ${getHK(person.records || {})}
       </td>
     `;
@@ -130,7 +133,8 @@ function renderTable() {
 
 function toggleAttendance(
   personIndex,
-  date
+  date,
+  checkbox
 ) {
 
   if (
@@ -143,12 +147,17 @@ function toggleAttendance(
   }
 
   attendance[personIndex].records[date] =
-    !attendance[personIndex].records[date];
+    checkbox.checked;
 
   saveData();
 
-  // Refresh tabel realtime
-  renderTable();
+  // Update HK realtime tanpa refresh tabel
+  document.getElementById(
+    `hk-${personIndex}`
+  ).innerText =
+    getHK(
+      attendance[personIndex].records
+    );
 
 }
 
@@ -183,7 +192,6 @@ function addName() {
 
   });
 
-  // Urut abjad
   attendance.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
@@ -258,7 +266,6 @@ function exportExcel() {
   const ws =
     XLSX.utils.aoa_to_sheet(data);
 
-  // Lebar kolom excel
   ws["!cols"] = [
 
     { wch: 30 },
@@ -289,5 +296,4 @@ function exportExcel() {
 
 }
 
-// Jalankan pertama kali
 renderTable();
