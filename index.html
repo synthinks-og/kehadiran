@@ -1,18 +1,31 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
   <title>Rekap Kehadiran</title>
 
-  <link rel="stylesheet" href="style.css"/>
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style/dist/xlsx.bundle.js"></script>
+  <!-- XLSX -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style/dist/xlsx.bundle.js"></script>
+
 </head>
+
 <body>
 
 <div id="app">
 
+  <!-- TOPBAR -->
   <div class="topbar">
 
     <h1>Rekap Kehadiran</h1>
@@ -37,14 +50,19 @@
 
   </div>
 
+  <!-- TABEL -->
   <div class="table-container">
 
     <table id="attendanceTable">
 
       <thead>
+
         <tr id="headerRow">
+
           <th>NAMA</th>
+
         </tr>
+
       </thead>
 
       <tbody id="tableBody"></tbody>
@@ -53,8 +71,23 @@
 
   </div>
 
+  <!-- FOOTER -->
+  <footer class="footer">
+
+    © 2026
+
+    <a
+      href="https://instagram.com/synthinks_"
+      target="_blank"
+    >
+      @Synthinks
+    </a>
+
+  </footer>
+
 </div>
 
+<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
