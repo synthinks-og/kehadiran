@@ -152,7 +152,7 @@ function toggleAttendance(
 
   saveData();
 
-  // Update HK realtime
+  // HK realtime
   document.getElementById(
     `hk-${personIndex}`
   ).innerText =
@@ -226,10 +226,24 @@ function exportExcel() {
 
   const data = [];
 
+  // Ambil tanggal yang ada attendance
+  const activeDates = dates.filter((date) => {
+
+    return attendance.some((person) => {
+
+      return (
+        person.records &&
+        person.records[date]
+      );
+
+    });
+
+  });
+
   // HEADER
   const header = ["NAMA"];
 
-  dates.forEach((date) => {
+  activeDates.forEach((date) => {
 
     header.push(date.toString());
 
@@ -244,7 +258,7 @@ function exportExcel() {
 
     const row = [person.name];
 
-    dates.forEach((date) => {
+    activeDates.forEach((date) => {
 
       row.push(
 
@@ -277,8 +291,8 @@ function exportExcel() {
     // Nama
     { wch: 35 },
 
-    // Tanggal
-    ...dates.map(() => ({
+    // Tanggal aktif
+    ...activeDates.map(() => ({
       wch: 4
     })),
 
@@ -351,7 +365,7 @@ function exportExcel() {
       // HEADER BIRU
       if (
         R === 0 &&
-        C !== dates.length + 1
+        C !== activeDates.length + 1
       ) {
 
         ws[cellAddress].s.fill = {
@@ -372,7 +386,7 @@ function exportExcel() {
 
       // HK KUNING
       if (
-        C === dates.length + 1
+        C === activeDates.length + 1
       ) {
 
         ws[cellAddress].s.fill = {
@@ -391,7 +405,7 @@ function exportExcel() {
 
       }
 
-      // NAMA RATA KIRI
+      // Nama rata kiri
       if (
         C === 0 &&
         R !== 0
