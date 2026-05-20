@@ -10,13 +10,11 @@ html, body{
   color:#111827;
 }
 
-/* ================= APP LAYOUT FIX ================= */
+/* ================= APP ================= */
 
 #app{
   display:flex;
   flex-direction:column;
-
-  /* 🔥 penting: jangan paksa height aneh */
   min-height:100vh;
 }
 
@@ -49,33 +47,22 @@ html, body{
   cursor:pointer;
 }
 
-/* ================= TABLE AREA (FIX CORE ISSUE) ================= */
+/* ================= TABLE ================= */
 
 .table-container{
   width:100%;
-
-  /* 🔥 ini kunci scroll stabil */
   overflow:auto;
-
   -webkit-overflow-scrolling:touch;
-
-  /* ❌ jangan flex:1 lagi */
-  flex:none;
-
   padding:10px 0;
 }
-
-/* ================= TABLE ================= */
 
 table{
   border-collapse:collapse;
   background:white;
-
   width:max-content;
   min-width:100%;
 }
 
-/* cells */
 th, td{
   border:1px solid #cbd5e1;
   padding:8px;
@@ -84,7 +71,6 @@ th, td{
   font-size:14px;
 }
 
-/* header */
 th{
   background:#dbeafe;
   position:sticky;
@@ -92,7 +78,6 @@ th{
   z-index:2;
 }
 
-/* sticky first column */
 th:first-child,
 td:first-child{
   text-align:left;
@@ -105,24 +90,81 @@ td:first-child{
   z-index:3;
 }
 
-/* HK */
 .hk{
   background:#fef08a;
   font-weight:bold;
 }
 
-/* ================= FOOTER FIX ================= */
+/* ================= FOOTER ================= */
 
 .footer{
+  margin-top:auto;
   width:100%;
   text-align:center;
-
   padding:20px;
   background:white;
   border-top:1px solid #e2e8f0;
+}
 
-  /* 🔥 ini yang bikin gak ada “ruang aneh” */
-  margin-top:auto;
+/* ================= MODAL (🔥 FIX UTAMA) ================= */
+
+.modal{
+  position:fixed !important;
+  inset:0 !important;
+
+  display:none !important;
+
+  justify-content:center;
+  align-items:center;
+
+  background:rgba(0,0,0,0.4);
+
+  z-index:9999 !important;
+}
+
+.modal-content{
+  background:white;
+  padding:25px;
+  border-radius:16px;
+
+  width:320px;
+  max-width:90%;
+}
+
+.modal-content input,
+.modal-content select{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #cbd5e1;
+  outline:none;
+}
+
+.modal-actions{
+  margin-top:20px;
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+.cancel-btn{
+  background:#94a3b8;
+  color:white;
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.delete-confirm-btn{
+  background:#dc2626;
+  color:white;
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
 }
 
 /* ================= MOBILE ================= */
