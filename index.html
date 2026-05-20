@@ -16,21 +16,22 @@
 
 <div id="app">
 
+  <!-- ================= TOPBAR ================= -->
   <div class="topbar">
 
     <h1>Rekap Kehadiran</h1>
 
     <div class="actions">
 
-      <button onclick="openAddModal()">
+      <button type="button" onclick="openAddModal()">
         Tambah
       </button>
 
-      <button onclick="openDeleteModal()">
+      <button type="button" onclick="openDeleteModal()">
         Hapus
       </button>
 
-      <button onclick="exportExcel()">
+      <button type="button" onclick="exportExcel()">
         Export
       </button>
 
@@ -38,6 +39,7 @@
 
   </div>
 
+  <!-- ================= TABLE ================= -->
   <div class="table-container">
 
     <table id="attendanceTable">
@@ -56,8 +58,9 @@
 
 </div>
 
-<!-- ADD MODAL -->
-<div id="addModal" class="modal">
+<!-- ================= ADD MODAL ================= -->
+<div id="addModal" class="modal" aria-hidden="true">
+
   <div class="modal-content">
 
     <h2>Tambah Nama</h2>
@@ -66,26 +69,28 @@
       type="text"
       id="addNameInput"
       placeholder="Masukkan nama"
+      autocomplete="off"
       onkeydown="if(event.key==='Enter'){confirmAddName()}"
     />
 
     <div class="modal-actions">
 
-      <button class="cancel-btn" onclick="closeAddModal()">
+      <button type="button" class="cancel-btn" onclick="closeAddModal()">
         Batal
       </button>
 
-      <button class="delete-confirm-btn" onclick="confirmAddName()">
+      <button type="button" class="delete-confirm-btn" onclick="confirmAddName()">
         Simpan
       </button>
 
     </div>
 
   </div>
+
 </div>
 
-<!-- DELETE MODAL -->
-<div id="deleteModal" class="modal">
+<!-- ================= DELETE MODAL ================= -->
+<div id="deleteModal" class="modal" aria-hidden="true">
 
   <div class="modal-content">
 
@@ -95,19 +100,21 @@
 
     <div class="modal-actions">
 
-      <button class="cancel-btn" onclick="closeDeleteModal()">
+      <button type="button" class="cancel-btn" onclick="closeDeleteModal()">
         Batal
       </button>
 
-      <button class="delete-confirm-btn" onclick="confirmDeleteName()">
+      <button type="button" class="delete-confirm-btn" onclick="confirmDeleteName()">
         Hapus
       </button>
 
     </div>
 
   </div>
+
 </div>
 
+<!-- ================= FOOTER ================= -->
 <footer class="footer">
   Copyright ©
   <a href="https://instagram.com/synthinks_" target="_blank">
