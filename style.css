@@ -45,14 +45,14 @@ body{
   color:white;
   cursor:pointer;
   font-weight:bold;
-  transition:0.2s;
 }
 
 .actions button:hover{
   opacity:0.9;
 }
 
-/* TABLE SCROLL FIX */
+/* ===== TABLE FIX ===== */
+
 .table-container{
   width:100%;
   overflow-x:auto;
@@ -66,8 +66,10 @@ body{
 table{
   border-collapse:collapse;
   background:white;
-  width:max-content;
-  min-width:100%;
+
+  width:100%;
+  min-width:900px; /* IMPORTANT FIX */
+
   box-shadow:0 4px 20px rgba(0,0,0,0.05);
   margin:auto;
 }
@@ -89,7 +91,6 @@ th{
 
 th:first-child,
 td:first-child{
-  width:var(--name-column-width);
   text-align:left;
   padding-left:14px;
   font-weight:600;
@@ -104,7 +105,8 @@ td:first-child{
   font-weight:bold;
 }
 
-/* MODAL */
+/* ===== MODAL ===== */
+
 .modal{
   position:fixed;
   inset:0;
@@ -124,7 +126,6 @@ td:first-child{
 
 .modal-content h2{
   margin-top:0;
-  margin-bottom:15px;
 }
 
 .modal-content input,
@@ -133,7 +134,6 @@ td:first-child{
   padding:12px;
   border-radius:10px;
   border:1px solid #cbd5e1;
-  font-size:14px;
   outline:none;
 }
 
@@ -151,7 +151,6 @@ td:first-child{
   padding:10px 14px;
   border-radius:10px;
   cursor:pointer;
-  font-weight:bold;
 }
 
 .delete-confirm-btn{
@@ -161,26 +160,29 @@ td:first-child{
   padding:10px 14px;
   border-radius:10px;
   cursor:pointer;
-  font-weight:bold;
 }
 
 .footer{
   margin-top:auto;
   text-align:center;
   padding:20px;
-  color:#64748b;
   background:white;
+  color:#64748b;
 }
 
 /* MOBILE */
 @media (max-width:768px){
 
-  th:first-child,
-  td:first-child{
-    position:static;
+  table{
+    min-width:700px;
   }
 
   .modal-content{
     width:90%;
+  }
+
+  th:first-child,
+  td:first-child{
+    position:static;
   }
 }
