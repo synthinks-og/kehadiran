@@ -137,23 +137,6 @@ input[type="checkbox"]{
   cursor:pointer;
 }
 
-/* DELETE BUTTON */
-
-.delete-btn{
-  background:#dc2626;
-  color:white;
-  border:none;
-  padding:6px 10px;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:13px;
-  transition:0.2s;
-}
-
-.delete-btn:hover{
-  opacity:0.9;
-}
-
 /* FOOTER */
 
 .footer{
@@ -176,6 +159,75 @@ input[type="checkbox"]{
 
 .footer a:hover{
   text-decoration:underline;
+}
+
+/* MODAL */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+.modal-content{
+  background:white;
+  padding:25px;
+  border-radius:16px;
+  width:320px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}
+
+.modal-content h2{
+  margin-top:0;
+  margin-bottom:15px;
+}
+
+.modal-content select{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #cbd5e1;
+  font-size:14px;
+  outline:none;
+}
+
+.modal-actions{
+  margin-top:20px;
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+.cancel-btn{
+  background:#94a3b8;
+  color:white;
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.cancel-btn:hover{
+  opacity:0.9;
+}
+
+.delete-confirm-btn{
+  background:#dc2626;
+  color:white;
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.delete-confirm-btn:hover{
+  opacity:0.9;
 }
 
 /* MOBILE */
@@ -202,6 +254,10 @@ input[type="checkbox"]{
   th,
   td{
     padding:6px;
+  }
+
+  .modal-content{
+    width:90%;
   }
 
 }
