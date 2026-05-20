@@ -40,7 +40,7 @@ function saveData() {
 
   localStorage.setItem(
     "attendance",
-    JSON.stringify(attendance)
+    JSON.stringify(attendance")
   );
 
 }
@@ -49,6 +49,25 @@ function renderTable() {
 
   const headerRow =
     document.getElementById("headerRow");
+
+  const tableBody =
+    document.getElementById("tableBody");
+
+  // AUTO WIDTH NAMA
+  const longestNameLength =
+    Math.max(
+      ...attendance.map(
+        (p) => p.name.length
+      ),
+      10
+    );
+
+  document.documentElement
+    .style
+    .setProperty(
+      "--name-column-width",
+      `${longestNameLength}ch`
+    );
 
   headerRow.innerHTML = `
     <th>NAMA</th>
@@ -67,9 +86,6 @@ function renderTable() {
     <th>AKSI</th>
   `;
 
-  const tableBody =
-    document.getElementById("tableBody");
-
   tableBody.innerHTML = "";
 
   attendance.forEach((person, personIndex) => {
@@ -77,7 +93,9 @@ function renderTable() {
     let row = `<tr>`;
 
     row += `
-      <td>${person.name}</td>
+      <td class="name-column">
+        ${person.name}
+      </td>
     `;
 
     dates.forEach((date) => {
@@ -226,7 +244,7 @@ function exportExcel() {
 
   const data = [];
 
-  // Ambil tanggal yang ada attendance
+  // Ambil tanggal aktif
   const activeDates = dates.filter((date) => {
 
     return attendance.some((person) => {
@@ -285,11 +303,20 @@ function exportExcel() {
   const ws =
     XLSX.utils.aoa_to_sheet(data);
 
+  // AUTO WIDTH NAMA EXCEL
+  const nameWidth =
+    Math.max(
+      ...attendance.map(
+        (p) => p.name.length
+      ),
+      10
+    );
+
   // LEBAR KOLOM
   ws["!cols"] = [
 
     // Nama
-    { wch: 35 },
+    { wch: nameWidth },
 
     // Tanggal aktif
     ...activeDates.map(() => ({
