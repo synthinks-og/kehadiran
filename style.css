@@ -96,7 +96,7 @@ th{
   z-index:1;
 }
 
-/* Nama */
+/* NAMA */
 
 th:first-child,
 td:first-child{
@@ -118,7 +118,7 @@ td:first-child{
   min-width:50px;
 }
 
-/* Checkbox */
+/* CHECKBOX */
 
 input[type="checkbox"]{
   width:18px;
@@ -126,7 +126,7 @@ input[type="checkbox"]{
   cursor:pointer;
 }
 
-/* Delete Button */
+/* DELETE BUTTON */
 
 .delete-btn{
   background:#dc2626;
@@ -143,9 +143,12 @@ input[type="checkbox"]{
   opacity:0.9;
 }
 
-/* Footer */
+/* FOOTER */
 
 .footer{
+  margin-top:auto;
+  width:100%;
+  box-sizing:border-box;
   text-align:center;
   padding:20px;
   color:#64748b;
@@ -164,7 +167,7 @@ input[type="checkbox"]{
   text-decoration:underline;
 }
 
-/* Mobile */
+/* MOBILE */
 
 @media (max-width:768px){
 
@@ -178,6 +181,7 @@ input[type="checkbox"]{
 
   .actions input{
     width:100%;
+    min-width:unset;
   }
 
   table{
