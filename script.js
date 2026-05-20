@@ -1,486 +1,129 @@
-const dates = [];
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-// 26 → 31
-for (let i = 26; i <= 31; i++) {
-  dates.push(i);
-}
+  <title>Rekap Kehadiran</title>
 
-// 1 → 25
-for (let i = 1; i <= 25; i++) {
-  dates.push(i);
-}
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
 
-let attendance = [];
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style/dist/xlsx.bundle.js"></script>
+</head>
 
-try {
+<body>
 
-  attendance =
-    JSON.parse(
-      localStorage.getItem("attendance")
-    ) || [];
+<div id="app">
 
-} catch {
+  <div class="topbar">
 
-  attendance = [];
+    <h1>Rekap Kehadiran</h1>
 
-}
+    <div class="actions">
 
-// FIX DATA LAMA
-attendance.forEach((person) => {
-
-  if (!person.records) {
-
-    person.records = {};
-
-  }
-
-});
-
-function saveData() {
-
-  localStorage.setItem(
-    "attendance",
-    JSON.stringify(attendance)
-  );
-
-}
-
-function renderTable() {
-
-  const headerRow =
-    document.getElementById("headerRow");
-
-  const tableBody =
-    document.getElementById("tableBody");
-
-  // AUTO WIDTH KOLOM NAMA
-  const longestNameLength =
-    Math.max(
-      ...attendance.map(
-        (p) => p.name.length
-      ),
-      10
-    );
-
-  document.documentElement
-    .style
-    .setProperty(
-      "--name-column-width",
-      `${longestNameLength}ch`
-    );
-
-  // HEADER
-  headerRow.innerHTML = `
-    <th>NAMA</th>
-  `;
-
-  dates.forEach((date) => {
-
-    headerRow.innerHTML += `
-      <th>${date}</th>
-    `;
-
-  });
-
-  headerRow.innerHTML += `
-    <th>HK</th>
-    <th>AKSI</th>
-  `;
-
-  // RESET BODY
-  tableBody.innerHTML = "";
-
-  // RENDER DATA
-  attendance.forEach((person, personIndex) => {
-
-    let row = `<tr>`;
-
-    // NAMA
-    row += `
-      <td class="name-column">
-        ${person.name}
-      </td>
-    `;
-
-    // TANGGAL
-    dates.forEach((date) => {
-
-      const checked =
-        person.records &&
-        person.records[date];
-
-      row += `
-        <td>
-          <input
-            type="checkbox"
-            ${checked ? "checked" : ""}
-            onchange="
-              toggleAttendance(
-                ${personIndex},
-                ${date},
-                this
-              )
-            "
-          >
-        </td>
-      `;
-
-    });
-
-    // HK
-    row += `
-      <td
-        class="hk"
-        id="hk-${personIndex}"
+      <input
+        type="text"
+        id="newName"
+        placeholder="Tambah nama"
+        onkeydown="
+          if(event.key === 'Enter'){
+            addName()
+          }
+        "
       >
-        ${getHK(person.records || {})}
-      </td>
-    `;
 
-    // AKSI
-    row += `
-      <td>
-        <button
-          onclick="deleteName(${personIndex})"
-          class="delete-btn"
-        >
-          Hapus
-        </button>
-      </td>
-    `;
+      <button onclick="addName()">
+        Tambah
+      </button>
 
-    row += `</tr>`;
+      <button onclick="openDeleteModal()">
+        Hapus Nama
+      </button>
 
-    tableBody.innerHTML += row;
+      <button onclick="exportExcel()">
+        Export Excel
+      </button>
 
-  });
+    </div>
 
-}
+  </div>
 
-function toggleAttendance(
-  personIndex,
-  date,
-  checkbox
-) {
+  <div class="table-container">
 
-  if (
-    !attendance[personIndex].records
-  ) {
+    <table id="attendanceTable">
 
-    attendance[personIndex].records =
-      {};
+      <thead>
 
-  }
+        <tr id="headerRow">
+          <th>NAMA</th>
+        </tr>
 
-  attendance[personIndex].records[date] =
-    checkbox.checked;
+      </thead>
 
-  saveData();
+      <tbody id="tableBody"></tbody>
 
-  // UPDATE HK REALTIME
-  document.getElementById(
-    `hk-${personIndex}`
-  ).innerText =
-    getHK(
-      attendance[personIndex].records
-    );
+    </table>
 
-}
+  </div>
 
-function getHK(records) {
+</div>
 
-  return Object.values(records)
-    .filter((v) => v).length;
+<!-- MODAL HAPUS -->
 
-}
+<div
+  id="deleteModal"
+  class="modal"
+>
 
-function addName() {
+  <div class="modal-content">
 
-  const input =
-    document.getElementById("newName");
+    <h2>Hapus Nama</h2>
 
-  const newName =
-    input.value.trim();
+    <select id="deleteSelect">
 
-  if (!newName) {
+    </select>
 
-    alert("Masukkan nama");
+    <div class="modal-actions">
 
-    return;
+      <button
+        class="cancel-btn"
+        onclick="closeDeleteModal()"
+      >
+        Batal
+      </button>
 
-  }
+      <button
+        class="delete-confirm-btn"
+        onclick="confirmDeleteName()"
+      >
+        Hapus
+      </button>
 
-  attendance.push({
+    </div>
 
-    name: newName.toUpperCase(),
+  </div>
 
-    records: {},
+</div>
 
-  });
+<footer class="footer">
 
-  // SORT ABJAD
-  attendance.sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
+  Copyright ©
+  <a
+    href="https://instagram.com/synthinks_"
+    target="_blank"
+  >
+    @Synthinks
+  </a>
 
-  input.value = "";
+</footer>
 
-  saveData();
+<script src="script.js"></script>
 
-  renderTable();
-
-}
-
-function deleteName(index) {
-
-  const confirmDelete = confirm(
-    "Hapus nama ini?"
-  );
-
-  if (!confirmDelete) return;
-
-  attendance.splice(index, 1);
-
-  saveData();
-
-  renderTable();
-
-}
-
-function exportExcel() {
-
-  const data = [];
-
-  // TANGGAL YANG ADA KEHADIRAN
-  const activeDates = dates.filter((date) => {
-
-    return attendance.some((person) => {
-
-      return (
-        person.records &&
-        person.records[date]
-      );
-
-    });
-
-  });
-
-  // HEADER
-  const header = ["NAMA"];
-
-  activeDates.forEach((date) => {
-
-    header.push(date.toString());
-
-  });
-
-  header.push("HK");
-
-  data.push(header);
-
-  // DATA
-  attendance.forEach((person) => {
-
-    const row = [person.name];
-
-    activeDates.forEach((date) => {
-
-      row.push(
-
-        person.records &&
-        person.records[date]
-
-          ? "☑"
-
-          : ""
-
-      );
-
-    });
-
-    row.push(
-      getHK(person.records || {})
-    );
-
-    data.push(row);
-
-  });
-
-  // SHEET
-  const ws =
-    XLSX.utils.aoa_to_sheet(data);
-
-  // AUTO WIDTH NAMA
-  const nameWidth =
-    Math.max(
-      ...attendance.map(
-        (p) => p.name.length
-      ),
-      10
-    );
-
-  // LEBAR KOLOM
-  ws["!cols"] = [
-
-    // NAMA
-    { wch: nameWidth },
-
-    // TANGGAL
-    ...activeDates.map(() => ({
-      wch: 4
-    })),
-
-    // HK
-    { wch: 5 }
-
-  ];
-
-  // RANGE
-  const range =
-    XLSX.utils.decode_range(ws["!ref"]);
-
-  // STYLE
-  for (
-    let R = range.s.r;
-    R <= range.e.r;
-    ++R
-  ) {
-
-    for (
-      let C = range.s.c;
-      C <= range.e.c;
-      ++C
-    ) {
-
-      const cellAddress =
-        XLSX.utils.encode_cell({
-          r: R,
-          c: C
-        });
-
-      if (!ws[cellAddress]) continue;
-
-      // BASE STYLE
-      ws[cellAddress].s = {
-
-        alignment: {
-
-          horizontal: "center",
-          vertical: "center"
-
-        },
-
-        border: {
-
-          top: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          },
-
-          bottom: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          },
-
-          left: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          },
-
-          right: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          }
-
-        }
-
-      };
-
-      // HEADER BIRU
-      if (
-        R === 0 &&
-        C !== activeDates.length + 1
-      ) {
-
-        ws[cellAddress].s.fill = {
-
-          fgColor: {
-            rgb: "DBEAFE"
-          }
-
-        };
-
-        ws[cellAddress].s.font = {
-
-          bold: true
-
-        };
-
-      }
-
-      // HK KUNING
-      if (
-        C === activeDates.length + 1
-      ) {
-
-        ws[cellAddress].s.fill = {
-
-          fgColor: {
-            rgb: "FEF08A"
-          }
-
-        };
-
-        ws[cellAddress].s.font = {
-
-          bold: true
-
-        };
-
-      }
-
-      // NAMA RATA KIRI
-      if (
-        C === 0 &&
-        R !== 0
-      ) {
-
-        ws[cellAddress].s.alignment = {
-
-          horizontal: "left",
-          vertical: "center"
-
-        };
-
-      }
-
-    }
-
-  }
-
-  // WORKBOOK
-  const wb =
-    XLSX.utils.book_new();
-
-  XLSX.utils.book_append_sheet(
-    wb,
-    ws,
-    "Rekap Kehadiran"
-  );
-
-  XLSX.writeFile(
-    wb,
-    "rekap-kehadiran.xlsx"
-  );
-
-}
-
-renderTable();
+</body>
+</html>
