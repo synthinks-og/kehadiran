@@ -330,16 +330,22 @@ function () {
 
     });
 
+  // HEADER
   const header = ["NAMA"];
 
   activeDates.forEach((date) => {
-    header.push(date.toString());
+
+    header.push(
+      date.toString()
+    );
+
   });
 
   header.push("HK");
 
   data.push(header);
 
+  // DATA
   attendance.forEach((person) => {
 
     const row = [person.name];
@@ -365,9 +371,11 @@ function () {
 
   });
 
+  // SHEET
   const ws =
     XLSX.utils.aoa_to_sheet(data);
 
+  // WIDTH
   const nameWidth =
     Math.max(
       ...attendance.map(
@@ -377,12 +385,165 @@ function () {
     );
 
   ws["!cols"] = [
+
     { wch: nameWidth },
-    ...activeDates.map(() => ({
-      wch: 4
-    })),
+
+    ...activeDates.map(
+      () => ({
+        wch: 4
+      })
+    ),
+
     { wch: 5 }
+
   ];
+
+  // RANGE
+  const range =
+    XLSX.utils.decode_range(
+      ws["!ref"]
+    );
+
+  // STYLE
+  for (
+    let R = range.s.r;
+    R <= range.e.r;
+    ++R
+  ) {
+
+    for (
+      let C = range.s.c;
+      C <= range.e.c;
+      ++C
+    ) {
+
+      const cellAddress =
+        XLSX.utils.encode_cell({
+          r: R,
+          c: C
+        });
+
+      if (!ws[cellAddress])
+        continue;
+
+      ws[cellAddress].s = {
+
+        alignment: {
+
+          horizontal:
+            "center",
+
+          vertical:
+            "center"
+
+        },
+
+        border: {
+
+          top: {
+            style: "thin",
+            color: {
+              rgb: "D1D5DB"
+            }
+          },
+
+          bottom: {
+            style: "thin",
+            color: {
+              rgb: "D1D5DB"
+            }
+          },
+
+          left: {
+            style: "thin",
+            color: {
+              rgb: "D1D5DB"
+            }
+          },
+
+          right: {
+            style: "thin",
+            color: {
+              rgb: "D1D5DB"
+            }
+          }
+
+        }
+
+      };
+
+      // HEADER BIRU
+      if (
+        R === 0 &&
+        C !==
+          activeDates.length +
+            1
+      ) {
+
+        ws[cellAddress]
+          .s.fill = {
+
+          fgColor: {
+            rgb: "DBEAFE"
+          }
+
+        };
+
+        ws[cellAddress]
+          .s.font = {
+
+          bold: true
+
+        };
+
+      }
+
+      // HK KUNING
+      if (
+        C ===
+        activeDates.length + 1
+      ) {
+
+        ws[cellAddress]
+          .s.fill = {
+
+          fgColor: {
+            rgb: "FEF08A"
+          }
+
+        };
+
+        ws[cellAddress]
+          .s.font = {
+
+          bold: true
+
+        };
+
+      }
+
+      // NAMA LEFT
+      if (
+        C === 0 &&
+        R !== 0
+      ) {
+
+        ws[cellAddress]
+          .s.alignment = {
+
+          horizontal:
+            "left",
+
+          vertical:
+            "center"
+
+        };
+
+      }
+
+    }
+
+  }
 
   const wb =
     XLSX.utils.book_new();
