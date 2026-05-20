@@ -9,6 +9,8 @@ import {
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
+/* ================= FIREBASE ================= */
+
 const firebaseConfig = {
   apiKey: "AIzaSyA-QjCZ2Z5rSLNZDXkIHDu-uXKi0VOhiFo",
   authDomain: "rekap-kehadiran.firebaseapp.com",
@@ -23,14 +25,32 @@ const db = getFirestore(app);
 
 const attendanceRef = doc(db, "attendance", "main");
 
+/* ================= STATE ================= */
+
 const dates = [];
 for (let i = 26; i <= 31; i++) dates.push(i);
 for (let i = 1; i <= 25; i++) dates.push(i);
 
 let attendance = [];
 
+/* ================= HARD INIT FIX ================= */
+
+function forceCloseAllModals() {
+  const modals = document.querySelectorAll(".modal");
+  modals.forEach(m => m.style.display = "none");
+}
+
+window.addEventListener("load", () => {
+  forceCloseAllModals();
+});
+
+/* ================= FIRESTORE ================= */
+
 onSnapshot(attendanceRef, (snapshot) => {
-  attendance = snapshot.exists() ? (snapshot.data().data || []) : [];
+
+  attendance = snapshot.exists()
+    ? (snapshot.data().data || [])
+    : [];
 
   attendance.forEach(p => {
     if (!p.records) p.records = {};
@@ -43,7 +63,7 @@ async function saveData() {
   await setDoc(attendanceRef, { data: attendance });
 }
 
-/* ===== TABLE ===== */
+/* ================= TABLE ================= */
 
 function renderTable() {
 
@@ -63,6 +83,7 @@ function renderTable() {
   attendance.forEach((p, i) => {
 
     let row = `<tr>`;
+
     row += `<td>${p.name}</td>`;
 
     dates.forEach(date => {
@@ -88,12 +109,15 @@ function renderTable() {
   });
 }
 
+/* ================= TOGGLE ================= */
+
 window.toggleAttendance = async function(i, date, el) {
+
   attendance[i].records = attendance[i].records || {};
   attendance[i].records[date] = el.checked;
 
-  document.getElementById(`hk-${i}`).innerText =
-    getHK(attendance[i].records);
+  const hk = document.getElementById(`hk-${i}`);
+  if (hk) hk.innerText = getHK(attendance[i].records);
 
   await saveData();
 };
@@ -102,19 +126,25 @@ function getHK(records) {
   return Object.values(records).filter(Boolean).length;
 }
 
-/* ===== ADD MODAL (FIXED) ===== */
+/* ================= ADD MODAL ================= */
 
 window.openAddModal = function () {
+  forceCloseAllModals();
+
   const m = document.getElementById("addModal");
   const i = document.getElementById("addNameInput");
 
+  if (!m || !i) return;
+
   i.value = "";
   m.style.display = "flex";
-  setTimeout(() => i.focus(), 100);
+
+  setTimeout(() => i.focus(), 50);
 };
 
 window.closeAddModal = function () {
-  document.getElementById("addModal").style.display = "none";
+  const m = document.getElementById("addModal");
+  if (m) m.style.display = "none";
 };
 
 window.confirmAddName = async function () {
@@ -137,11 +167,15 @@ window.confirmAddName = async function () {
   closeAddModal();
 };
 
-/* ===== DELETE MODAL ===== */
+/* ================= DELETE MODAL ================= */
 
 window.openDeleteModal = function () {
+  forceCloseAllModals();
+
   const modal = document.getElementById("deleteModal");
   const select = document.getElementById("deleteSelect");
+
+  if (!modal || !select) return;
 
   select.innerHTML = "";
 
@@ -153,13 +187,16 @@ window.openDeleteModal = function () {
 };
 
 window.closeDeleteModal = function () {
-  document.getElementById("deleteModal").style.display = "none";
+  const m = document.getElementById("deleteModal");
+  if (m) m.style.display = "none";
 };
 
 window.confirmDeleteName = async function () {
 
-  const index = document.getElementById("deleteSelect").value;
-  if (index === "") return;
+  const select = document.getElementById("deleteSelect");
+  const index = select.value;
+
+  if (index === "" || index === null) return;
 
   attendance.splice(index,1);
 
@@ -167,7 +204,7 @@ window.confirmDeleteName = async function () {
   closeDeleteModal();
 };
 
-/* ===== EXPORT (unchanged simple version) ===== */
+/* ================= EXPORT ================= */
 
 window.exportExcel = function () {
 
