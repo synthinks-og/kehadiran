@@ -21,542 +21,195 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const attendanceRef = doc(
-  db,
-  "attendance",
-  "main"
-);
+const attendanceRef = doc(db, "attendance", "main");
 
 const dates = [];
 
-for (let i = 26; i <= 31; i++) {
-  dates.push(i);
-}
-
-for (let i = 1; i <= 25; i++) {
-  dates.push(i);
-}
+for (let i = 26; i <= 31; i++) dates.push(i);
+for (let i = 1; i <= 25; i++) dates.push(i);
 
 let attendance = [];
 
-onSnapshot(
-  attendanceRef,
-  (snapshot) => {
+onSnapshot(attendanceRef, (snapshot) => {
+  attendance = snapshot.exists() ? (snapshot.data().data || []) : [];
 
-    if (snapshot.exists()) {
-      attendance =
-        snapshot.data().data || [];
-    } else {
-      attendance = [];
-    }
+  attendance.forEach(p => {
+    if (!p.records) p.records = {};
+  });
 
-    attendance.forEach((person) => {
-      if (!person.records) {
-        person.records = {};
-      }
-    });
-
-    renderTable();
-
-  }
-);
+  renderTable();
+});
 
 async function saveData() {
-
-  await setDoc(
-    attendanceRef,
-    {
-      data: attendance
-    }
-  );
-
+  await setDoc(attendanceRef, { data: attendance });
 }
 
 function renderTable() {
 
-  const headerRow =
-    document.getElementById(
-      "headerRow"
-    );
+  const headerRow = document.getElementById("headerRow");
+  const tableBody = document.getElementById("tableBody");
 
-  const tableBody =
-    document.getElementById(
-      "tableBody"
-    );
+  const longestNameLength = Math.max(
+    ...attendance.map(p => p.name.length),
+    10
+  );
 
-  const longestNameLength =
-    Math.max(
-      ...attendance.map(
-        (p) => p.name.length
-      ),
-      10
-    );
+  document.documentElement.style.setProperty(
+    "--name-column-width",
+    `${longestNameLength}ch`
+  );
 
-  document.documentElement
-    .style
-    .setProperty(
-      "--name-column-width",
-      `${longestNameLength}ch`
-    );
+  headerRow.innerHTML = `<th>NAMA</th>`;
 
-  headerRow.innerHTML = `
-    <th>NAMA</th>
-  `;
-
-  dates.forEach((date) => {
-
-    headerRow.innerHTML += `
-      <th>${date}</th>
-    `;
-
+  dates.forEach(d => {
+    headerRow.innerHTML += `<th>${d}</th>`;
   });
 
-  headerRow.innerHTML += `
-    <th>HK</th>
-  `;
+  headerRow.innerHTML += `<th>HK</th>`;
 
   tableBody.innerHTML = "";
 
-  attendance.forEach((person, personIndex) => {
+  attendance.forEach((person, i) => {
 
     let row = `<tr>`;
 
-    row += `
-      <td class="name-column">
-        ${person.name}
-      </td>
-    `;
+    row += `<td>${person.name}</td>`;
 
-    dates.forEach((date) => {
+    dates.forEach(date => {
 
-      const checked =
-        person.records &&
-        person.records[date];
+      const checked = person.records?.[date];
 
       row += `
         <td>
-          <input
-            type="checkbox"
+          <input type="checkbox"
             ${checked ? "checked" : ""}
-            onchange="
-              window.toggleAttendance(
-                ${personIndex},
-                ${date},
-                this
-              )
-            "
+            onchange="toggleAttendance(${i}, ${date}, this)"
           >
         </td>
       `;
-
     });
 
     row += `
-      <td
-        class="hk"
-        id="hk-${personIndex}"
-      >
-        ${getHK(
-          person.records || {}
-        )}
+      <td class="hk" id="hk-${i}">
+        ${getHK(person.records || {})}
       </td>
     `;
 
     row += `</tr>`;
 
     tableBody.innerHTML += row;
-
   });
-
 }
 
-window.toggleAttendance =
-async function (
-  personIndex,
-  date,
-  checkbox
-) {
+window.toggleAttendance = async function(i, date, checkbox) {
 
-  if (
-    !attendance[personIndex]
-      .records
-  ) {
+  attendance[i].records = attendance[i].records || {};
+  attendance[i].records[date] = checkbox.checked;
 
-    attendance[personIndex]
-      .records = {};
-
-  }
-
-  attendance[personIndex]
-    .records[date] =
-    checkbox.checked;
-
-  document.getElementById(
-    `hk-${personIndex}`
-  ).innerText =
-    getHK(
-      attendance[personIndex]
-        .records
-    );
+  document.getElementById(`hk-${i}`).innerText =
+    getHK(attendance[i].records);
 
   await saveData();
-
 };
 
 function getHK(records) {
-
-  return Object.values(records)
-    .filter((v) => v)
-    .length;
-
+  return Object.values(records).filter(v => v).length;
 }
 
-window.addName =
-async function () {
+/* ================= ADD MODAL ================= */
 
-  const input =
-    document.getElementById(
-      "newName"
-    );
+window.openAddModal = function () {
+  document.getElementById("addModal").style.display = "flex";
+  document.getElementById("addNameInput").value = "";
+};
 
-  const newName =
-    input.value.trim();
+window.closeAddModal = function () {
+  document.getElementById("addModal").style.display = "none";
+};
 
-  if (!newName) {
-    alert("Masukkan nama");
-    return;
-  }
+window.confirmAddName = async function () {
+
+  const input = document.getElementById("addNameInput");
+  const name = input.value.trim();
+
+  if (!name) return alert("Masukkan nama");
 
   attendance.push({
-    name:
-      newName.toUpperCase(),
+    name: name.toUpperCase(),
     records: {}
   });
 
-  attendance.sort((a, b) =>
+  attendance.sort((a,b) =>
     a.name.localeCompare(b.name)
   );
 
-  input.value = "";
-
   await saveData();
-
+  closeAddModal();
 };
 
-window.openDeleteModal =
-function () {
+/* ================= DELETE MODAL ================= */
 
-  const modal =
-    document.getElementById(
-      "deleteModal"
-    );
+window.openDeleteModal = function () {
 
-  const select =
-    document.getElementById(
-      "deleteSelect"
-    );
+  const modal = document.getElementById("deleteModal");
+  const select = document.getElementById("deleteSelect");
 
   select.innerHTML = "";
 
-  attendance.forEach((person, index) => {
-
-    select.innerHTML += `
-      <option value="${index}">
-        ${person.name}
-      </option>
-    `;
-
+  attendance.forEach((p,i) => {
+    select.innerHTML += `<option value="${i}">${p.name}</option>`;
   });
 
-  modal.style.display =
-    "flex";
-
+  modal.style.display = "flex";
 };
 
-window.closeDeleteModal =
-function () {
-
-  document.getElementById(
-    "deleteModal"
-  ).style.display =
-    "none";
-
+window.closeDeleteModal = function () {
+  document.getElementById("deleteModal").style.display = "none";
 };
 
-window.confirmDeleteName =
-async function () {
+window.confirmDeleteName = async function () {
 
-  const select =
-    document.getElementById(
-      "deleteSelect"
-    );
+  const index = document.getElementById("deleteSelect").value;
 
-  const index =
-    select.value;
-
-  if (
-    index === "" ||
-    index === null
-  ) {
-    return;
-  }
+  if (index === "") return;
 
   attendance.splice(index, 1);
 
   await saveData();
-
   closeDeleteModal();
-
 };
 
-window.exportExcel =
-function () {
+/* ================= EXPORT ================= */
+
+window.exportExcel = function () {
 
   const data = [];
 
-  const activeDates =
-    dates.filter((date) => {
+  const activeDates = dates.filter(date =>
+    attendance.some(p => p.records?.[date])
+  );
 
-      return attendance.some(
-        (person) => {
-
-          return (
-            person.records &&
-            person.records[date]
-          );
-
-        }
-      );
-
-    });
-
-  // HEADER
-  const header = ["NAMA"];
-
-  activeDates.forEach((date) => {
-
-    header.push(
-      date.toString()
-    );
-
-  });
-
-  header.push("HK");
+  const header = ["NAMA", ...activeDates.map(String), "HK"];
 
   data.push(header);
 
-  // DATA
-  attendance.forEach((person) => {
+  attendance.forEach(p => {
 
-    const row = [person.name];
+    const row = [p.name];
 
-    activeDates.forEach((date) => {
-
-      row.push(
-        person.records &&
-        person.records[date]
-          ? "☑"
-          : ""
-      );
-
+    activeDates.forEach(date => {
+      row.push(p.records?.[date] ? "☑" : "");
     });
 
-    row.push(
-      getHK(
-        person.records || {}
-      )
-    );
+    row.push(getHK(p.records || {}));
 
     data.push(row);
-
   });
 
-  // SHEET
-  const ws =
-    XLSX.utils.aoa_to_sheet(data);
+  const ws = XLSX.utils.aoa_to_sheet(data);
 
-  // WIDTH
-  const nameWidth =
-    Math.max(
-      ...attendance.map(
-        (p) => p.name.length
-      ),
-      10
-    );
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Rekap");
 
-  ws["!cols"] = [
-
-    { wch: nameWidth },
-
-    ...activeDates.map(
-      () => ({
-        wch: 4
-      })
-    ),
-
-    { wch: 5 }
-
-  ];
-
-  // RANGE
-  const range =
-    XLSX.utils.decode_range(
-      ws["!ref"]
-    );
-
-  // STYLE
-  for (
-    let R = range.s.r;
-    R <= range.e.r;
-    ++R
-  ) {
-
-    for (
-      let C = range.s.c;
-      C <= range.e.c;
-      ++C
-    ) {
-
-      const cellAddress =
-        XLSX.utils.encode_cell({
-          r: R,
-          c: C
-        });
-
-      if (!ws[cellAddress])
-        continue;
-
-      ws[cellAddress].s = {
-
-        alignment: {
-
-          horizontal:
-            "center",
-
-          vertical:
-            "center"
-
-        },
-
-        border: {
-
-          top: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          },
-
-          bottom: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          },
-
-          left: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          },
-
-          right: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          }
-
-        }
-
-      };
-
-      // HEADER BIRU
-      if (
-        R === 0 &&
-        C !==
-          activeDates.length +
-            1
-      ) {
-
-        ws[cellAddress]
-          .s.fill = {
-
-          fgColor: {
-            rgb: "DBEAFE"
-          }
-
-        };
-
-        ws[cellAddress]
-          .s.font = {
-
-          bold: true
-
-        };
-
-      }
-
-      // HK KUNING
-      if (
-        C ===
-        activeDates.length + 1
-      ) {
-
-        ws[cellAddress]
-          .s.fill = {
-
-          fgColor: {
-            rgb: "FEF08A"
-          }
-
-        };
-
-        ws[cellAddress]
-          .s.font = {
-
-          bold: true
-
-        };
-
-      }
-
-      // NAMA LEFT
-      if (
-        C === 0 &&
-        R !== 0
-      ) {
-
-        ws[cellAddress]
-          .s.alignment = {
-
-          horizontal:
-            "left",
-
-          vertical:
-            "center"
-
-        };
-
-      }
-
-    }
-
-  }
-
-  const wb =
-    XLSX.utils.book_new();
-
-  XLSX.utils.book_append_sheet(
-    wb,
-    ws,
-    "Rekap Kehadiran"
-  );
-
-  XLSX.writeFile(
-    wb,
-    "rekap-kehadiran.xlsx"
-  );
-
+  XLSX.writeFile(wb, "rekap-kehadiran.xlsx");
 };
