@@ -2,11 +2,17 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <title>Rekap Kehadiran</title>
 
-  <link rel="stylesheet" href="style.css" />
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style/dist/xlsx.bundle.js"></script>
   <script type="module" src="script.js"></script>
@@ -16,38 +22,49 @@
 
 <div id="app">
 
-  <!-- ================= TOPBAR ================= -->
   <div class="topbar">
 
     <h1>Rekap Kehadiran</h1>
 
     <div class="actions">
 
-      <button type="button" onclick="openAddModal()">
+      <input
+        type="text"
+        id="newName"
+        placeholder="Tambah nama"
+        onkeydown="
+          if(event.key === 'Enter'){
+            addName()
+          }
+        "
+      >
+
+      <button onclick="addName()">
         Tambah
       </button>
 
-      <button type="button" onclick="openDeleteModal()">
-        Hapus
+      <button onclick="openDeleteModal()">
+        Hapus Nama
       </button>
 
-      <button type="button" onclick="exportExcel()">
-        Export
+      <button onclick="exportExcel()">
+        Export Excel
       </button>
 
     </div>
 
   </div>
 
-  <!-- ================= TABLE ================= -->
   <div class="table-container">
 
     <table id="attendanceTable">
 
       <thead>
+
         <tr id="headerRow">
           <th>NAMA</th>
         </tr>
+
       </thead>
 
       <tbody id="tableBody"></tbody>
@@ -58,53 +75,32 @@
 
 </div>
 
-<!-- ================= ADD MODAL ================= -->
-<div id="addModal" class="modal" aria-hidden="true">
-
-  <div class="modal-content">
-
-    <h2>Tambah Nama</h2>
-
-    <input
-      type="text"
-      id="addNameInput"
-      placeholder="Masukkan nama"
-      autocomplete="off"
-      onkeydown="if(event.key==='Enter'){confirmAddName()}"
-    />
-
-    <div class="modal-actions">
-
-      <button type="button" class="cancel-btn" onclick="closeAddModal()">
-        Batal
-      </button>
-
-      <button type="button" class="delete-confirm-btn" onclick="confirmAddName()">
-        Simpan
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-<!-- ================= DELETE MODAL ================= -->
-<div id="deleteModal" class="modal" aria-hidden="true">
+<div
+  id="deleteModal"
+  class="modal"
+>
 
   <div class="modal-content">
 
     <h2>Hapus Nama</h2>
 
-    <select id="deleteSelect"></select>
+    <select id="deleteSelect">
+
+    </select>
 
     <div class="modal-actions">
 
-      <button type="button" class="cancel-btn" onclick="closeDeleteModal()">
+      <button
+        class="cancel-btn"
+        onclick="closeDeleteModal()"
+      >
         Batal
       </button>
 
-      <button type="button" class="delete-confirm-btn" onclick="confirmDeleteName()">
+      <button
+        class="delete-confirm-btn"
+        onclick="confirmDeleteName()"
+      >
         Hapus
       </button>
 
@@ -114,12 +110,16 @@
 
 </div>
 
-<!-- ================= FOOTER ================= -->
 <footer class="footer">
+
   Copyright ©
-  <a href="https://instagram.com/synthinks_" target="_blank">
-    Synthinks
+  <a
+    href="https://instagram.com/synthinks_"
+    target="_blank"
+  >
+    @Synthinks
   </a>
+
 </footer>
 
 </body>
