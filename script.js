@@ -1,46 +1,73 @@
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA-QjCZ2Z5rSLNZDXkIHDu-uXKi0VOhiFo",
+  authDomain: "rekap-kehadiran.firebaseapp.com",
+  projectId: "rekap-kehadiran",
+  storageBucket: "rekap-kehadiran.firebasestorage.app",
+  messagingSenderId: "544538520853",
+  appId: "1:544538520853:web:17b768306620ea0b058d1c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const attendanceRef = doc(
+  db,
+  "attendance",
+  "main"
+);
+
 const dates = [];
 
-// 26 → 31
 for (let i = 26; i <= 31; i++) {
   dates.push(i);
 }
 
-// 1 → 25
 for (let i = 1; i <= 25; i++) {
   dates.push(i);
 }
 
 let attendance = [];
 
-try {
+onSnapshot(
+  attendanceRef,
+  (snapshot) => {
 
-  attendance =
-    JSON.parse(
-      localStorage.getItem("attendance")
-    ) || [];
+    if (snapshot.exists()) {
+      attendance =
+        snapshot.data().data || [];
+    } else {
+      attendance = [];
+    }
 
-} catch {
+    attendance.forEach((person) => {
+      if (!person.records) {
+        person.records = {};
+      }
+    });
 
-  attendance = [];
-
-}
-
-// FIX DATA LAMA
-attendance.forEach((person) => {
-
-  if (!person.records) {
-
-    person.records = {};
+    renderTable();
 
   }
+);
 
-});
+async function saveData() {
 
-function saveData() {
-
-  localStorage.setItem(
-    "attendance",
-    JSON.stringify(attendance)
+  await setDoc(
+    attendanceRef,
+    {
+      data: attendance
+    }
   );
 
 }
@@ -48,12 +75,15 @@ function saveData() {
 function renderTable() {
 
   const headerRow =
-    document.getElementById("headerRow");
+    document.getElementById(
+      "headerRow"
+    );
 
   const tableBody =
-    document.getElementById("tableBody");
+    document.getElementById(
+      "tableBody"
+    );
 
-  // AUTO WIDTH KOLOM NAMA
   const longestNameLength =
     Math.max(
       ...attendance.map(
@@ -69,7 +99,6 @@ function renderTable() {
       `${longestNameLength}ch`
     );
 
-  // HEADER
   headerRow.innerHTML = `
     <th>NAMA</th>
   `;
@@ -86,22 +115,18 @@ function renderTable() {
     <th>HK</th>
   `;
 
-  // RESET BODY
   tableBody.innerHTML = "";
 
-  // RENDER DATA
   attendance.forEach((person, personIndex) => {
 
     let row = `<tr>`;
 
-    // NAMA
     row += `
       <td class="name-column">
         ${person.name}
       </td>
     `;
 
-    // TANGGAL
     dates.forEach((date) => {
 
       const checked =
@@ -114,7 +139,7 @@ function renderTable() {
             type="checkbox"
             ${checked ? "checked" : ""}
             onchange="
-              toggleAttendance(
+              window.toggleAttendance(
                 ${personIndex},
                 ${date},
                 this
@@ -126,13 +151,14 @@ function renderTable() {
 
     });
 
-    // HK
     row += `
       <td
         class="hk"
         id="hk-${personIndex}"
       >
-        ${getHK(person.records || {})}
+        ${getHK(
+          person.records || {}
+        )}
       </td>
     `;
 
@@ -144,81 +170,81 @@ function renderTable() {
 
 }
 
-function toggleAttendance(
+window.toggleAttendance =
+async function (
   personIndex,
   date,
   checkbox
 ) {
 
   if (
-    !attendance[personIndex].records
+    !attendance[personIndex]
+      .records
   ) {
 
-    attendance[personIndex].records =
-      {};
+    attendance[personIndex]
+      .records = {};
 
   }
 
-  attendance[personIndex].records[date] =
+  attendance[personIndex]
+    .records[date] =
     checkbox.checked;
 
-  saveData();
-
-  // UPDATE HK REALTIME
   document.getElementById(
     `hk-${personIndex}`
   ).innerText =
     getHK(
-      attendance[personIndex].records
+      attendance[personIndex]
+        .records
     );
 
-}
+  await saveData();
+
+};
 
 function getHK(records) {
 
   return Object.values(records)
-    .filter((v) => v).length;
+    .filter((v) => v)
+    .length;
 
 }
 
-function addName() {
+window.addName =
+async function () {
 
   const input =
-    document.getElementById("newName");
+    document.getElementById(
+      "newName"
+    );
 
   const newName =
     input.value.trim();
 
   if (!newName) {
-
     alert("Masukkan nama");
-
     return;
-
   }
 
   attendance.push({
-
-    name: newName.toUpperCase(),
-
-    records: {},
-
+    name:
+      newName.toUpperCase(),
+    records: {}
   });
 
-  // SORT ABJAD
   attendance.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
 
   input.value = "";
 
-  saveData();
+  await saveData();
 
-  renderTable();
+};
 
-}
-
-function openDeleteModal() {
+window.openDeleteModal =
+function () {
 
   const modal =
     document.getElementById(
@@ -242,78 +268,78 @@ function openDeleteModal() {
 
   });
 
-  modal.style.display = "flex";
+  modal.style.display =
+    "flex";
 
-}
+};
 
-function closeDeleteModal() {
+window.closeDeleteModal =
+function () {
 
   document.getElementById(
     "deleteModal"
-  ).style.display = "none";
+  ).style.display =
+    "none";
 
-}
+};
 
-function confirmDeleteName() {
+window.confirmDeleteName =
+async function () {
 
   const select =
     document.getElementById(
       "deleteSelect"
     );
 
-  const index = select.value;
+  const index =
+    select.value;
 
   if (
     index === "" ||
     index === null
   ) {
-
     return;
-
   }
 
   attendance.splice(index, 1);
 
-  saveData();
-
-  renderTable();
+  await saveData();
 
   closeDeleteModal();
 
-}
+};
 
-function exportExcel() {
+window.exportExcel =
+function () {
 
   const data = [];
 
-  // TANGGAL YANG ADA KEHADIRAN
-  const activeDates = dates.filter((date) => {
+  const activeDates =
+    dates.filter((date) => {
 
-    return attendance.some((person) => {
+      return attendance.some(
+        (person) => {
 
-      return (
-        person.records &&
-        person.records[date]
+          return (
+            person.records &&
+            person.records[date]
+          );
+
+        }
       );
 
     });
 
-  });
-
-  // HEADER
   const header = ["NAMA"];
 
   activeDates.forEach((date) => {
-
     header.push(date.toString());
-
   });
 
   header.push("HK");
 
   data.push(header);
 
-  // DATA
   attendance.forEach((person) => {
 
     const row = [person.name];
@@ -321,31 +347,27 @@ function exportExcel() {
     activeDates.forEach((date) => {
 
       row.push(
-
         person.records &&
         person.records[date]
-
           ? "☑"
-
           : ""
-
       );
 
     });
 
     row.push(
-      getHK(person.records || {})
+      getHK(
+        person.records || {}
+      )
     );
 
     data.push(row);
 
   });
 
-  // SHEET
   const ws =
     XLSX.utils.aoa_to_sheet(data);
 
-  // AUTO WIDTH NAMA
   const nameWidth =
     Math.max(
       ...attendance.map(
@@ -354,148 +376,13 @@ function exportExcel() {
       10
     );
 
-  // LEBAR KOLOM
   ws["!cols"] = [
-
     { wch: nameWidth },
-
     ...activeDates.map(() => ({
       wch: 4
     })),
-
     { wch: 5 }
-
   ];
-
-  // RANGE
-  const range =
-    XLSX.utils.decode_range(ws["!ref"]);
-
-  // STYLE
-  for (
-    let R = range.s.r;
-    R <= range.e.r;
-    ++R
-  ) {
-
-    for (
-      let C = range.s.c;
-      C <= range.e.c;
-      ++C
-    ) {
-
-      const cellAddress =
-        XLSX.utils.encode_cell({
-          r: R,
-          c: C
-        });
-
-      if (!ws[cellAddress]) continue;
-
-      ws[cellAddress].s = {
-
-        alignment: {
-
-          horizontal: "center",
-          vertical: "center"
-
-        },
-
-        border: {
-
-          top: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          },
-
-          bottom: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          },
-
-          left: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          },
-
-          right: {
-            style: "thin",
-            color: {
-              rgb: "D1D5DB"
-            }
-          }
-
-        }
-
-      };
-
-      // HEADER BIRU
-      if (
-        R === 0 &&
-        C !== activeDates.length + 1
-      ) {
-
-        ws[cellAddress].s.fill = {
-
-          fgColor: {
-            rgb: "DBEAFE"
-          }
-
-        };
-
-        ws[cellAddress].s.font = {
-
-          bold: true
-
-        };
-
-      }
-
-      // HK KUNING
-      if (
-        C === activeDates.length + 1
-      ) {
-
-        ws[cellAddress].s.fill = {
-
-          fgColor: {
-            rgb: "FEF08A"
-          }
-
-        };
-
-        ws[cellAddress].s.font = {
-
-          bold: true
-
-        };
-
-      }
-
-      // NAMA RATA KIRI
-      if (
-        C === 0 &&
-        R !== 0
-      ) {
-
-        ws[cellAddress].s.alignment = {
-
-          horizontal: "left",
-          vertical: "center"
-
-        };
-
-      }
-
-    }
-
-  }
 
   const wb =
     XLSX.utils.book_new();
@@ -511,6 +398,4 @@ function exportExcel() {
     "rekap-kehadiran.xlsx"
   );
 
-}
-
-renderTable();
+};
