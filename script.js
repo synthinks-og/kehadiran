@@ -151,7 +151,6 @@ function toggleAttendance(
 
   saveData();
 
-  // Update HK realtime tanpa refresh tabel
   document.getElementById(
     `hk-${personIndex}`
   ).innerText =
@@ -224,6 +223,7 @@ function exportExcel() {
 
   const data = [];
 
+  // HEADER
   const header = ["NAMA"];
 
   dates.forEach((date) => {
@@ -236,6 +236,7 @@ function exportExcel() {
 
   data.push(header);
 
+  // DATA
   attendance.forEach((person) => {
 
     const row = [person.name];
@@ -247,7 +248,7 @@ function exportExcel() {
         person.records &&
         person.records[date]
 
-          ? "✓"
+          ? "☑"
 
           : ""
 
@@ -266,19 +267,131 @@ function exportExcel() {
   const ws =
     XLSX.utils.aoa_to_sheet(data);
 
+  // LEBAR KOLOM
   ws["!cols"] = [
 
-    { wch: 30 },
+    { wch: 35 },
 
     ...dates.map(() => ({
-      wch: 2.5
+      wch: 4
     })),
 
-    { wch: 5 },
-
-    { wch: 10 }
+    { wch: 6 }
 
   ];
+
+  // STYLE
+  const range =
+    XLSX.utils.decode_range(ws["!ref"]);
+
+  for (
+    let R = range.s.r;
+    R <= range.e.r;
+    ++R
+  ) {
+
+    for (
+      let C = range.s.c;
+      C <= range.e.c;
+      ++C
+    ) {
+
+      const cellAddress =
+        XLSX.utils.encode_cell({
+          r: R,
+          c: C
+        });
+
+      if (!ws[cellAddress]) continue;
+
+      ws[cellAddress].s = {
+
+        border: {
+
+          top: {
+            style: "thin",
+            color: { rgb: "000000" }
+          },
+
+          bottom: {
+            style: "thin",
+            color: { rgb: "000000" }
+          },
+
+          left: {
+            style: "thin",
+            color: { rgb: "000000" }
+          },
+
+          right: {
+            style: "thin",
+            color: { rgb: "000000" }
+          }
+
+        },
+
+        alignment: {
+
+          horizontal: "center",
+          vertical: "center"
+
+        }
+
+      };
+
+      // Header biru
+      if (R === 0 && C !== dates.length + 1) {
+
+        ws[cellAddress].s.fill = {
+
+          fgColor: {
+            rgb: "9DC3E6"
+          }
+
+        };
+
+        ws[cellAddress].s.font = {
+
+          bold: true
+
+        };
+
+      }
+
+      // HK kuning
+      if (C === dates.length + 1) {
+
+        ws[cellAddress].s.fill = {
+
+          fgColor: {
+            rgb: "FFD966"
+          }
+
+        };
+
+        ws[cellAddress].s.font = {
+
+          bold: true
+
+        };
+
+      }
+
+      // Nama rata kiri
+      if (C === 0 && R !== 0) {
+
+        ws[cellAddress].s.alignment = {
+
+          horizontal: "left",
+          vertical: "center"
+
+        };
+
+      }
+
+    }
+
+  }
 
   const wb =
     XLSX.utils.book_new();
