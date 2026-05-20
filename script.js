@@ -312,6 +312,7 @@ function exportExcel() {
 
       if (!ws[cellAddress]) continue;
 
+      // BASE STYLE
       ws[cellAddress].s = {
 
         alignment: {
@@ -319,41 +320,97 @@ function exportExcel() {
           horizontal: "center",
           vertical: "center"
 
+        },
+
+        border: {
+
+          top: {
+            style: "thin",
+            color: { rgb: "D1D5DB" }
+          },
+
+          bottom: {
+            style: "thin",
+            color: { rgb: "D1D5DB" }
+          },
+
+          left: {
+            style: "thin",
+            color: { rgb: "D1D5DB" }
+          },
+
+          right: {
+            style: "thin",
+            color: { rgb: "D1D5DB" }
+          }
+
         }
 
       };
+
+      // HEADER BIRU
+      if (
+        R === 0 &&
+        C !== dates.length + 1
+      ) {
+
+        ws[cellAddress].s.fill = {
+
+          fgColor: {
+            rgb: "DBEAFE"
+          }
+
+        };
+
+        ws[cellAddress].s.font = {
+
+          bold: true
+
+        };
+
+      }
+
+      // HK KUNING
+      if (
+        C === dates.length + 1
+      ) {
+
+        ws[cellAddress].s.fill = {
+
+          fgColor: {
+            rgb: "FEF08A"
+          }
+
+        };
+
+        ws[cellAddress].s.font = {
+
+          bold: true
+
+        };
+
+      }
+
+      // NAMA RATA KIRI
+      if (
+        C === 0 &&
+        R !== 0
+      ) {
+
+        ws[cellAddress].s.alignment = {
+
+          horizontal: "left",
+          vertical: "center"
+
+        };
+
+      }
 
     }
 
   }
 
-  // Nama rata kiri
-  attendance.forEach((_, index) => {
-
-    const cell =
-      XLSX.utils.encode_cell({
-        r: index + 1,
-        c: 0
-      });
-
-    if (ws[cell]) {
-
-      ws[cell].s = {
-
-        alignment: {
-
-          horizontal: "left",
-          vertical: "center"
-
-        }
-
-      };
-
-    }
-
-  });
-
-  // Workbook
+  // WORKBOOK
   const wb =
     XLSX.utils.book_new();
 
