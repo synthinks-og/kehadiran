@@ -1,9 +1,11 @@
 const dates = [];
 
-for (let i = 25; i <= 31; i++) {
+// Tanggal 26 sampai 31
+for (let i = 26; i <= 31; i++) {
   dates.push(i);
 }
 
+// Tanggal 1 sampai 25
 for (let i = 1; i <= 25; i++) {
   dates.push(i);
 }
@@ -23,6 +25,7 @@ try {
 
 }
 
+// Fix data lama rusak
 attendance.forEach((person) => {
 
   if (!person.records) {
@@ -177,6 +180,7 @@ function addName() {
 
   });
 
+  // Urut abjad
   attendance.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
@@ -251,6 +255,7 @@ function exportExcel() {
   const ws =
     XLSX.utils.aoa_to_sheet(data);
 
+  // Lebar kolom
   ws["!cols"] = [
 
     { wch: 30 },
@@ -260,6 +265,8 @@ function exportExcel() {
     })),
 
     { wch: 5 },
+
+    { wch: 10 }
 
   ];
 
