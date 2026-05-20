@@ -9,8 +9,6 @@ import {
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-/* ================= FIREBASE ================= */
-
 const firebaseConfig = {
   apiKey: "AIzaSyA-QjCZ2Z5rSLNZDXkIHDu-uXKi0VOhiFo",
   authDomain: "rekap-kehadiran.firebaseapp.com",
@@ -23,213 +21,381 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const attendanceRef = doc(db, "attendance", "main");
-
-/* ================= STATE ================= */
+const attendanceRef = doc(
+  db,
+  "attendance",
+  "main"
+);
 
 const dates = [];
-for (let i = 26; i <= 31; i++) dates.push(i);
-for (let i = 1; i <= 25; i++) dates.push(i);
+
+for (let i = 26; i <= 31; i++) {
+  dates.push(i);
+}
+
+for (let i = 1; i <= 25; i++) {
+  dates.push(i);
+}
 
 let attendance = [];
 
-/* ================= HARD INIT FIX ================= */
+onSnapshot(
+  attendanceRef,
+  (snapshot) => {
 
-function forceCloseAllModals() {
-  const modals = document.querySelectorAll(".modal");
-  modals.forEach(m => m.style.display = "none");
-}
+    if (snapshot.exists()) {
+      attendance =
+        snapshot.data().data || [];
+    } else {
+      attendance = [];
+    }
 
-window.addEventListener("load", () => {
-  forceCloseAllModals();
-});
+    attendance.forEach((person) => {
+      if (!person.records) {
+        person.records = {};
+      }
+    });
 
-/* ================= FIRESTORE ================= */
+    renderTable();
 
-onSnapshot(attendanceRef, (snapshot) => {
-
-  attendance = snapshot.exists()
-    ? (snapshot.data().data || [])
-    : [];
-
-  attendance.forEach(p => {
-    if (!p.records) p.records = {};
-  });
-
-  renderTable();
-});
+  }
+);
 
 async function saveData() {
-  await setDoc(attendanceRef, { data: attendance });
-}
 
-/* ================= TABLE ================= */
+  await setDoc(
+    attendanceRef,
+    {
+      data: attendance
+    }
+  );
+
+}
 
 function renderTable() {
 
-  const headerRow = document.getElementById("headerRow");
-  const tableBody = document.getElementById("tableBody");
+  const headerRow =
+    document.getElementById(
+      "headerRow"
+    );
 
-  headerRow.innerHTML = `<th>NAMA</th>`;
+  const tableBody =
+    document.getElementById(
+      "tableBody"
+    );
 
-  dates.forEach(d => {
-    headerRow.innerHTML += `<th>${d}</th>`;
+  const longestNameLength =
+    Math.max(
+      ...attendance.map(
+        (p) => p.name.length
+      ),
+      10
+    );
+
+  document.documentElement
+    .style
+    .setProperty(
+      "--name-column-width",
+      `${longestNameLength}ch`
+    );
+
+  headerRow.innerHTML = `
+    <th>NAMA</th>
+  `;
+
+  dates.forEach((date) => {
+
+    headerRow.innerHTML += `
+      <th>${date}</th>
+    `;
+
   });
 
-  headerRow.innerHTML += `<th>HK</th>`;
+  headerRow.innerHTML += `
+    <th>HK</th>
+  `;
 
   tableBody.innerHTML = "";
 
-  attendance.forEach((p, i) => {
+  attendance.forEach((person, personIndex) => {
 
     let row = `<tr>`;
 
-    row += `<td>${p.name}</td>`;
+    row += `
+      <td class="name-column">
+        ${person.name}
+      </td>
+    `;
 
-    dates.forEach(date => {
+    dates.forEach((date) => {
+
+      const checked =
+        person.records &&
+        person.records[date];
+
       row += `
         <td>
-          <input type="checkbox"
-            ${p.records?.[date] ? "checked" : ""}
-            onchange="toggleAttendance(${i},${date},this)"
+          <input
+            type="checkbox"
+            ${checked ? "checked" : ""}
+            onchange="
+              window.toggleAttendance(
+                ${personIndex},
+                ${date},
+                this
+              )
+            "
           >
         </td>
       `;
+
     });
 
     row += `
-      <td class="hk" id="hk-${i}">
-        ${getHK(p.records || {})}
+      <td
+        class="hk"
+        id="hk-${personIndex}"
+      >
+        ${getHK(
+          person.records || {}
+        )}
       </td>
     `;
 
     row += `</tr>`;
 
     tableBody.innerHTML += row;
+
   });
+
 }
 
-/* ================= TOGGLE ================= */
+window.toggleAttendance =
+async function (
+  personIndex,
+  date,
+  checkbox
+) {
 
-window.toggleAttendance = async function(i, date, el) {
+  if (
+    !attendance[personIndex]
+      .records
+  ) {
 
-  attendance[i].records = attendance[i].records || {};
-  attendance[i].records[date] = el.checked;
+    attendance[personIndex]
+      .records = {};
 
-  const hk = document.getElementById(`hk-${i}`);
-  if (hk) hk.innerText = getHK(attendance[i].records);
+  }
+
+  attendance[personIndex]
+    .records[date] =
+    checkbox.checked;
+
+  document.getElementById(
+    `hk-${personIndex}`
+  ).innerText =
+    getHK(
+      attendance[personIndex]
+        .records
+    );
 
   await saveData();
+
 };
 
 function getHK(records) {
-  return Object.values(records).filter(Boolean).length;
+
+  return Object.values(records)
+    .filter((v) => v)
+    .length;
+
 }
 
-/* ================= ADD MODAL ================= */
+window.addName =
+async function () {
 
-window.openAddModal = function () {
-  forceCloseAllModals();
+  const input =
+    document.getElementById(
+      "newName"
+    );
 
-  const m = document.getElementById("addModal");
-  const i = document.getElementById("addNameInput");
+  const newName =
+    input.value.trim();
 
-  if (!m || !i) return;
-
-  i.value = "";
-  m.style.display = "flex";
-
-  setTimeout(() => i.focus(), 50);
-};
-
-window.closeAddModal = function () {
-  const m = document.getElementById("addModal");
-  if (m) m.style.display = "none";
-};
-
-window.confirmAddName = async function () {
-
-  const input = document.getElementById("addNameInput");
-  const name = input.value.trim();
-
-  if (!name) return alert("Masukkan nama");
+  if (!newName) {
+    alert("Masukkan nama");
+    return;
+  }
 
   attendance.push({
-    name: name.toUpperCase(),
+    name:
+      newName.toUpperCase(),
     records: {}
   });
 
-  attendance.sort((a,b) =>
+  attendance.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
 
+  input.value = "";
+
   await saveData();
-  closeAddModal();
+
 };
 
-/* ================= DELETE MODAL ================= */
+window.openDeleteModal =
+function () {
 
-window.openDeleteModal = function () {
-  forceCloseAllModals();
+  const modal =
+    document.getElementById(
+      "deleteModal"
+    );
 
-  const modal = document.getElementById("deleteModal");
-  const select = document.getElementById("deleteSelect");
-
-  if (!modal || !select) return;
+  const select =
+    document.getElementById(
+      "deleteSelect"
+    );
 
   select.innerHTML = "";
 
-  attendance.forEach((p,i) => {
-    select.innerHTML += `<option value="${i}">${p.name}</option>`;
+  attendance.forEach((person, index) => {
+
+    select.innerHTML += `
+      <option value="${index}">
+        ${person.name}
+      </option>
+    `;
+
   });
 
-  modal.style.display = "flex";
+  modal.style.display =
+    "flex";
+
 };
 
-window.closeDeleteModal = function () {
-  const m = document.getElementById("deleteModal");
-  if (m) m.style.display = "none";
+window.closeDeleteModal =
+function () {
+
+  document.getElementById(
+    "deleteModal"
+  ).style.display =
+    "none";
+
 };
 
-window.confirmDeleteName = async function () {
+window.confirmDeleteName =
+async function () {
 
-  const select = document.getElementById("deleteSelect");
-  const index = select.value;
+  const select =
+    document.getElementById(
+      "deleteSelect"
+    );
 
-  if (index === "" || index === null) return;
+  const index =
+    select.value;
 
-  attendance.splice(index,1);
+  if (
+    index === "" ||
+    index === null
+  ) {
+    return;
+  }
+
+  attendance.splice(index, 1);
 
   await saveData();
+
   closeDeleteModal();
+
 };
 
-/* ================= EXPORT ================= */
-
-window.exportExcel = function () {
+window.exportExcel =
+function () {
 
   const data = [];
-  const activeDates = dates.filter(d =>
-    attendance.some(p => p.records?.[d])
-  );
 
-  data.push([
-    "NAMA",
-    ...activeDates.map(String),
-    "HK"
-  ]);
+  const activeDates =
+    dates.filter((date) => {
 
-  attendance.forEach(p => {
-    data.push([
-      p.name,
-      ...activeDates.map(d => p.records?.[d] ? "☑" : ""),
-      getHK(p.records || {})
-    ]);
+      return attendance.some(
+        (person) => {
+
+          return (
+            person.records &&
+            person.records[date]
+          );
+
+        }
+      );
+
+    });
+
+  const header = ["NAMA"];
+
+  activeDates.forEach((date) => {
+    header.push(date.toString());
   });
 
-  const ws = XLSX.utils.aoa_to_sheet(data);
-  const wb = XLSX.utils.book_new();
+  header.push("HK");
 
-  XLSX.utils.book_append_sheet(wb, ws, "Rekap");
-  XLSX.writeFile(wb, "rekap-kehadiran.xlsx");
+  data.push(header);
+
+  attendance.forEach((person) => {
+
+    const row = [person.name];
+
+    activeDates.forEach((date) => {
+
+      row.push(
+        person.records &&
+        person.records[date]
+          ? "☑"
+          : ""
+      );
+
+    });
+
+    row.push(
+      getHK(
+        person.records || {}
+      )
+    );
+
+    data.push(row);
+
+  });
+
+  const ws =
+    XLSX.utils.aoa_to_sheet(data);
+
+  const nameWidth =
+    Math.max(
+      ...attendance.map(
+        (p) => p.name.length
+      ),
+      10
+    );
+
+  ws["!cols"] = [
+    { wch: nameWidth },
+    ...activeDates.map(() => ({
+      wch: 4
+    })),
+    { wch: 5 }
+  ];
+
+  const wb =
+    XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    wb,
+    ws,
+    "Rekap Kehadiran"
+  );
+
+  XLSX.writeFile(
+    wb,
+    "rekap-kehadiran.xlsx"
+  );
+
 };
