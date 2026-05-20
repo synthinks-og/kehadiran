@@ -1,24 +1,19 @@
-*{
-  box-sizing:border-box;
+:root{
+  --name-column-width:auto;
 }
 
-html, body{
+body{
   margin:0;
-  padding:0;
   font-family:Arial, sans-serif;
   background:#f1f5f9;
   color:#111827;
 }
 
-/* ================= APP ================= */
-
 #app{
+  min-height:100vh;
   display:flex;
   flex-direction:column;
-  min-height:100vh;
 }
-
-/* ================= TOPBAR ================= */
 
 .topbar{
   padding:20px;
@@ -31,10 +26,28 @@ html, body{
   box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
 
+.topbar h1{
+  margin:0;
+  font-size:28px;
+}
+
 .actions{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
+}
+
+.actions input{
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid #cbd5e1;
+  outline:none;
+  min-width:220px;
+  font-size:14px;
+}
+
+.actions input:focus{
+  border-color:#2563eb;
 }
 
 .actions button{
@@ -43,100 +56,124 @@ html, body{
   border-radius:10px;
   background:#2563eb;
   color:white;
-  font-weight:bold;
   cursor:pointer;
+  font-weight:bold;
+  transition:0.2s;
 }
 
-/* ================= TABLE ================= */
+.actions button:hover{
+  opacity:0.9;
+}
 
 .table-container{
-  width:100%;
   overflow:auto;
-  -webkit-overflow-scrolling:touch;
-  padding:10px 0;
+  padding:20px;
+  flex:1;
+  display:flex;
+  justify-content:center;
 }
 
 table{
   border-collapse:collapse;
   background:white;
   width:max-content;
-  min-width:100%;
+  box-shadow:0 4px 20px rgba(0,0,0,0.05);
+  margin:auto;
 }
 
-th, td{
+th,
+td{
   border:1px solid #cbd5e1;
   padding:8px;
   text-align:center;
-  white-space:nowrap;
   font-size:14px;
+  white-space:nowrap;
 }
 
 th{
   background:#dbeafe;
   position:sticky;
   top:0;
-  z-index:2;
+  z-index:1;
 }
 
 th:first-child,
 td:first-child{
+  width:var(--name-column-width);
   text-align:left;
   padding-left:14px;
   font-weight:600;
   background:white;
-
   position:sticky;
   left:0;
-  z-index:3;
+  z-index:2;
+  white-space:nowrap;
+  box-sizing:border-box;
 }
 
 .hk{
   background:#fef08a;
   font-weight:bold;
+  min-width:50px;
 }
 
-/* ================= FOOTER ================= */
+input[type="checkbox"]{
+  width:18px;
+  height:18px;
+  cursor:pointer;
+}
 
 .footer{
   margin-top:auto;
   width:100%;
+  box-sizing:border-box;
   text-align:center;
   padding:20px;
+  color:#64748b;
+  font-size:14px;
   background:white;
   border-top:1px solid #e2e8f0;
 }
 
-/* ================= MODAL (🔥 FIX UTAMA) ================= */
+.footer a{
+  color:#2563eb;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.footer a:hover{
+  text-decoration:underline;
+}
 
 .modal{
-  position:fixed !important;
-  inset:0 !important;
-
-  display:none !important;
-
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  display:none;
   justify-content:center;
   align-items:center;
-
-  background:rgba(0,0,0,0.4);
-
-  z-index:9999 !important;
+  z-index:999;
 }
 
 .modal-content{
   background:white;
   padding:25px;
   border-radius:16px;
-
   width:320px;
-  max-width:90%;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
 }
 
-.modal-content input,
+.modal-content h2{
+  margin-top:0;
+  margin-bottom:15px;
+}
+
 .modal-content select{
   width:100%;
   padding:12px;
   border-radius:10px;
   border:1px solid #cbd5e1;
+  font-size:14px;
   outline:none;
 }
 
@@ -167,17 +204,32 @@ td:first-child{
   font-weight:bold;
 }
 
-/* ================= MOBILE ================= */
-
 @media (max-width:768px){
 
-  th:first-child,
-  td:first-child{
-    position:static;
+  .topbar{
+    align-items:flex-start;
   }
 
-  th, td{
+  .actions{
+    width:100%;
+  }
+
+  .actions input{
+    width:100%;
+    min-width:unset;
+  }
+
+  table{
     font-size:12px;
+  }
+
+  th,
+  td{
     padding:6px;
   }
+
+  .modal-content{
+    width:90%;
+  }
+
 }
