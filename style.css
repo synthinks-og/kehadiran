@@ -8,17 +8,15 @@ html, body{
   font-family:Arial, sans-serif;
   background:#f1f5f9;
   color:#111827;
-
-  /* penting: jangan paksa height 100vh */
-  height:auto;
-  min-height:100%;
 }
 
-/* ================= APP ================= */
+/* ================= APP LAYOUT FIX ================= */
 
 #app{
   display:flex;
   flex-direction:column;
+
+  /* 🔥 penting: jangan paksa height aneh */
   min-height:100vh;
 }
 
@@ -51,17 +49,18 @@ html, body{
   cursor:pointer;
 }
 
-/* ================= TABLE AREA ================= */
+/* ================= TABLE AREA (FIX CORE ISSUE) ================= */
 
 .table-container{
-  flex:1;
-
   width:100%;
 
-  /* 🔥 ONLY ONE SCROLL SYSTEM */
+  /* 🔥 ini kunci scroll stabil */
   overflow:auto;
 
   -webkit-overflow-scrolling:touch;
+
+  /* ❌ jangan flex:1 lagi */
+  flex:none;
 
   padding:10px 0;
 }
@@ -93,7 +92,7 @@ th{
   z-index:2;
 }
 
-/* sticky first column (desktop only behavior still ok) */
+/* sticky first column */
 th:first-child,
 td:first-child{
   text-align:left;
@@ -106,20 +105,24 @@ td:first-child{
   z-index:3;
 }
 
-/* HK column */
+/* HK */
 .hk{
   background:#fef08a;
   font-weight:bold;
 }
 
-/* ================= FOOTER ================= */
+/* ================= FOOTER FIX ================= */
 
 .footer{
-  margin-top:auto; /* 🔥 ini kunci biar gak “nempel di tengah” */
+  width:100%;
   text-align:center;
+
   padding:20px;
   background:white;
   border-top:1px solid #e2e8f0;
+
+  /* 🔥 ini yang bikin gak ada “ruang aneh” */
+  margin-top:auto;
 }
 
 /* ================= MOBILE ================= */
