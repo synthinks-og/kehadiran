@@ -1,19 +1,16 @@
-:root{
-  --name-column-width:auto;
-}
-
 *{
   box-sizing:border-box;
 }
 
-body{
+html, body{
   margin:0;
+  padding:0;
   font-family:Arial, sans-serif;
   background:#f1f5f9;
   color:#111827;
-
-  overflow-x:hidden;
 }
+
+/* ================= APP LAYOUT ================= */
 
 #app{
   min-height:100vh;
@@ -34,11 +31,6 @@ body{
   box-shadow:0 2px 10px rgba(0,0,0,0.05);
 }
 
-.topbar h1{
-  margin:0;
-  font-size:28px;
-}
-
 .actions{
   display:flex;
   gap:10px;
@@ -51,33 +43,21 @@ body{
   border-radius:10px;
   background:#2563eb;
   color:white;
-  cursor:pointer;
   font-weight:bold;
-}
-
-.actions button:hover{
-  opacity:0.9;
+  cursor:pointer;
 }
 
 /* ================= TABLE WRAPPER ================= */
 
 .table-container{
-  width:100vw;
-  max-width:100%;
-
-  overflow-x:auto;
-  overflow-y:hidden;
-
-  -webkit-overflow-scrolling:touch;
-  touch-action:pan-x;
-
-  padding:10px 0;
-
   flex:1;
 
-  /* 🔥 CENTER LOGIC */
-  display:flex;
-  justify-content:center;
+  width:100%;
+
+  /* 🔥 INI KUNCI: bisa scroll 2 arah */
+  overflow:auto;
+
+  -webkit-overflow-scrolling:touch;
 }
 
 /* ================= TABLE ================= */
@@ -86,9 +66,9 @@ table{
   border-collapse:collapse;
   background:white;
 
+  /* 🔥 penting: biarkan natural width */
   width:max-content;
-
-  /* ❌ jangan margin:auto (bisa ganggu scroll center flex) */
+  min-width:100%;
 }
 
 /* cell */
@@ -105,10 +85,10 @@ th{
   background:#dbeafe;
   position:sticky;
   top:0;
-  z-index:1;
+  z-index:2;
 }
 
-/* sticky first column */
+/* sticky nama (desktop only nanti) */
 th:first-child,
 td:first-child{
   text-align:left;
@@ -118,99 +98,30 @@ td:first-child{
 
   position:sticky;
   left:0;
-  z-index:2;
+  z-index:3;
 }
 
-/* HK column */
+/* HK */
 .hk{
   background:#fef08a;
-  font-weight:bold;
-}
-
-/* ================= MODAL ================= */
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-
-  display:none;
-  justify-content:center;
-  align-items:center;
-
-  z-index:999;
-}
-
-.modal-content{
-  background:white;
-  padding:25px;
-  border-radius:16px;
-
-  width:320px;
-  max-width:90%;
-}
-
-.modal-content h2{
-  margin-top:0;
-  margin-bottom:15px;
-}
-
-.modal-content input,
-.modal-content select{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #cbd5e1;
-  outline:none;
-}
-
-/* modal buttons */
-.modal-actions{
-  margin-top:20px;
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-}
-
-.cancel-btn{
-  background:#94a3b8;
-  color:white;
-  border:none;
-  padding:10px 14px;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.delete-confirm-btn{
-  background:#dc2626;
-  color:white;
-  border:none;
-  padding:10px 14px;
-  border-radius:10px;
-  cursor:pointer;
   font-weight:bold;
 }
 
 /* ================= FOOTER ================= */
 
 .footer{
-  margin-top:auto;
   text-align:center;
   padding:20px;
   background:white;
-  color:#64748b;
   border-top:1px solid #e2e8f0;
+  font-size:14px;
 }
 
-/* ================= MOBILE ================= */
+/* ================= MOBILE FIX ================= */
 
 @media (max-width:768px){
 
-  .topbar h1{
-    font-size:20px;
-  }
-
+  /* disable sticky column di HP (biar gak bug overlap) */
   th:first-child,
   td:first-child{
     position:static;
@@ -219,5 +130,10 @@ td:first-child{
   th, td{
     font-size:12px;
     padding:6px;
+  }
+
+  /* pastikan scroll tetap jalan */
+  .table-container{
+    overflow:auto;
   }
 }
