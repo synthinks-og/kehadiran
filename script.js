@@ -25,7 +25,7 @@ try {
 
 }
 
-// Fix data lama
+// FIX DATA LAMA
 attendance.forEach((person) => {
 
   if (!person.records) {
@@ -40,7 +40,7 @@ function saveData() {
 
   localStorage.setItem(
     "attendance",
-    JSON.stringify(attendance")
+    JSON.stringify(attendance)
   );
 
 }
@@ -53,7 +53,7 @@ function renderTable() {
   const tableBody =
     document.getElementById("tableBody");
 
-  // AUTO WIDTH NAMA
+  // AUTO WIDTH KOLOM NAMA
   const longestNameLength =
     Math.max(
       ...attendance.map(
@@ -69,6 +69,7 @@ function renderTable() {
       `${longestNameLength}ch`
     );
 
+  // HEADER
   headerRow.innerHTML = `
     <th>NAMA</th>
   `;
@@ -86,18 +87,22 @@ function renderTable() {
     <th>AKSI</th>
   `;
 
+  // RESET BODY
   tableBody.innerHTML = "";
 
+  // RENDER DATA
   attendance.forEach((person, personIndex) => {
 
     let row = `<tr>`;
 
+    // NAMA
     row += `
       <td class="name-column">
         ${person.name}
       </td>
     `;
 
+    // TANGGAL
     dates.forEach((date) => {
 
       const checked =
@@ -122,6 +127,7 @@ function renderTable() {
 
     });
 
+    // HK
     row += `
       <td
         class="hk"
@@ -131,6 +137,7 @@ function renderTable() {
       </td>
     `;
 
+    // AKSI
     row += `
       <td>
         <button
@@ -170,7 +177,7 @@ function toggleAttendance(
 
   saveData();
 
-  // HK realtime
+  // UPDATE HK REALTIME
   document.getElementById(
     `hk-${personIndex}`
   ).innerText =
@@ -211,7 +218,7 @@ function addName() {
 
   });
 
-  // Urut abjad
+  // SORT ABJAD
   attendance.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
@@ -244,7 +251,7 @@ function exportExcel() {
 
   const data = [];
 
-  // Ambil tanggal aktif
+  // TANGGAL YANG ADA KEHADIRAN
   const activeDates = dates.filter((date) => {
 
     return attendance.some((person) => {
@@ -303,7 +310,7 @@ function exportExcel() {
   const ws =
     XLSX.utils.aoa_to_sheet(data);
 
-  // AUTO WIDTH NAMA EXCEL
+  // AUTO WIDTH NAMA
   const nameWidth =
     Math.max(
       ...attendance.map(
@@ -315,10 +322,10 @@ function exportExcel() {
   // LEBAR KOLOM
   ws["!cols"] = [
 
-    // Nama
+    // NAMA
     { wch: nameWidth },
 
-    // Tanggal aktif
+    // TANGGAL
     ...activeDates.map(() => ({
       wch: 4
     })),
@@ -367,22 +374,30 @@ function exportExcel() {
 
           top: {
             style: "thin",
-            color: { rgb: "D1D5DB" }
+            color: {
+              rgb: "D1D5DB"
+            }
           },
 
           bottom: {
             style: "thin",
-            color: { rgb: "D1D5DB" }
+            color: {
+              rgb: "D1D5DB"
+            }
           },
 
           left: {
             style: "thin",
-            color: { rgb: "D1D5DB" }
+            color: {
+              rgb: "D1D5DB"
+            }
           },
 
           right: {
             style: "thin",
-            color: { rgb: "D1D5DB" }
+            color: {
+              rgb: "D1D5DB"
+            }
           }
 
         }
@@ -432,7 +447,7 @@ function exportExcel() {
 
       }
 
-      // Nama rata kiri
+      // NAMA RATA KIRI
       if (
         C === 0 &&
         R !== 0
