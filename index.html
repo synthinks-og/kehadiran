@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rekap Kehadiran</title>
+
+  <link rel="stylesheet" href="style.css"/>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div id="loginPage" class="login-container">
+  <div class="login-box">
+    <h1>Login Admin</h1>
+
+    <input type="text" id="username" placeholder="Username"/>
+    <input type="password" id="password" placeholder="Password"/>
+
+    <button onclick="login()">Login</button>
+
+    <p>admin / admin123</p>
+  </div>
+</div>
+
+<div id="app" style="display:none;">
+
+  <div class="topbar">
+    <h1>Rekap Kehadiran</h1>
+
+    <div class="actions">
+      <input type="text" id="newName" placeholder="Tambah nama"/>
+
+      <button onclick="addName()">Tambah</button>
+
+      <button onclick="exportExcel()">Export Excel</button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table id="attendanceTable">
+      <thead>
+        <tr id="headerRow">
+          <th>NAMA</th>
+        </tr>
+      </thead>
+
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
