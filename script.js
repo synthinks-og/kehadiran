@@ -1,11 +1,11 @@
 const dates = [];
 
-// Tanggal 26 sampai 31
+// Tanggal 26 → 31
 for (let i = 26; i <= 31; i++) {
   dates.push(i);
 }
 
-// Tanggal 1 sampai 25
+// Tanggal 1 → 25
 for (let i = 1; i <= 25; i++) {
   dates.push(i);
 }
@@ -147,6 +147,9 @@ function toggleAttendance(
 
   saveData();
 
+  // Refresh tabel realtime
+  renderTable();
+
 }
 
 function getHK(records) {
@@ -255,7 +258,7 @@ function exportExcel() {
   const ws =
     XLSX.utils.aoa_to_sheet(data);
 
-  // Lebar kolom
+  // Lebar kolom excel
   ws["!cols"] = [
 
     { wch: 30 },
@@ -286,4 +289,5 @@ function exportExcel() {
 
 }
 
+// Jalankan pertama kali
 renderTable();
