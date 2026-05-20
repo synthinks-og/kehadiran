@@ -69,7 +69,7 @@ function renderTable() {
   });
 
   headerRow.innerHTML += `
-    <th>Kehadiran</th>
+    <th>HK</th>
     <th>AKSI</th>
   `;
 
