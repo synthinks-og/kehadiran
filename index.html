@@ -12,34 +12,66 @@
 <body>
 
 <div id="loginPage" class="login-container">
+
   <div class="login-box">
+
     <h1>Login Admin</h1>
 
-    <input type="text" id="username" placeholder="Username"/>
-    <input type="password" id="password" placeholder="Password"/>
+    <input
+      type="text"
+      id="username"
+      placeholder="Username"
+    >
 
-    <button onclick="login()">Login</button>
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+    >
 
-    <p>admin / admin123</p>
+    <button onclick="login()">
+      Login
+    </button>
+
+    <p>
+      Username: admin <br>
+      Password: admin123
+    </p>
+
   </div>
+
 </div>
 
 <div id="app" style="display:none;">
 
   <div class="topbar">
+
     <h1>Rekap Kehadiran</h1>
 
     <div class="actions">
-      <input type="text" id="newName" placeholder="Tambah nama"/>
 
-      <button onclick="addName()">Tambah</button>
+      <input
+        type="text"
+        id="newName"
+        placeholder="Tambah nama"
+      >
 
-      <button onclick="exportExcel()">Export Excel</button>
+      <button onclick="addName()">
+        Tambah
+      </button>
+
+      <button onclick="exportExcel()">
+        Export Excel
+      </button>
+
     </div>
+
   </div>
 
   <div class="table-container">
+
     <table id="attendanceTable">
+
       <thead>
         <tr id="headerRow">
           <th>NAMA</th>
@@ -47,11 +79,14 @@
       </thead>
 
       <tbody id="tableBody"></tbody>
+
     </table>
+
   </div>
 
 </div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
