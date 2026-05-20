@@ -12,7 +12,6 @@ body{
   background:#f1f5f9;
   color:#111827;
 
-  /* 🔥 penting: cegah page ikut melebar */
   overflow-x:hidden;
 }
 
@@ -60,7 +59,7 @@ body{
   opacity:0.9;
 }
 
-/* ================= TABLE SCROLL FIX (CORE) ================= */
+/* ================= TABLE WRAPPER ================= */
 
 .table-container{
   width:100vw;
@@ -73,17 +72,23 @@ body{
   touch-action:pan-x;
 
   padding:10px 0;
+
   flex:1;
 
-  display:block;
+  /* 🔥 CENTER LOGIC */
+  display:flex;
+  justify-content:center;
 }
+
+/* ================= TABLE ================= */
 
 table{
   border-collapse:collapse;
   background:white;
 
-  width:max-content;   /* 🔥 kunci: tabel alami, bukan dipaksa */
-  margin:0;
+  width:max-content;
+
+  /* ❌ jangan margin:auto (bisa ganggu scroll center flex) */
 }
 
 /* cell */
@@ -103,7 +108,7 @@ th{
   z-index:1;
 }
 
-/* nama column sticky */
+/* sticky first column */
 th:first-child,
 td:first-child{
   text-align:left;
@@ -208,7 +213,7 @@ td:first-child{
 
   th:first-child,
   td:first-child{
-    position:static; /* biar gak nabrak di mobile */
+    position:static;
   }
 
   th, td{
