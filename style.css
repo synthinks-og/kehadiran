@@ -8,14 +8,18 @@ html, body{
   font-family:Arial, sans-serif;
   background:#f1f5f9;
   color:#111827;
+
+  /* penting: jangan paksa height 100vh */
+  height:auto;
+  min-height:100%;
 }
 
-/* ================= APP LAYOUT ================= */
+/* ================= APP ================= */
 
 #app{
-  min-height:100vh;
   display:flex;
   flex-direction:column;
+  min-height:100vh;
 }
 
 /* ================= TOPBAR ================= */
@@ -47,17 +51,19 @@ html, body{
   cursor:pointer;
 }
 
-/* ================= TABLE WRAPPER ================= */
+/* ================= TABLE AREA ================= */
 
 .table-container{
   flex:1;
 
   width:100%;
 
-  /* 🔥 INI KUNCI: bisa scroll 2 arah */
+  /* 🔥 ONLY ONE SCROLL SYSTEM */
   overflow:auto;
 
   -webkit-overflow-scrolling:touch;
+
+  padding:10px 0;
 }
 
 /* ================= TABLE ================= */
@@ -66,18 +72,17 @@ table{
   border-collapse:collapse;
   background:white;
 
-  /* 🔥 penting: biarkan natural width */
   width:max-content;
   min-width:100%;
 }
 
-/* cell */
+/* cells */
 th, td{
   border:1px solid #cbd5e1;
   padding:8px;
   text-align:center;
-  font-size:14px;
   white-space:nowrap;
+  font-size:14px;
 }
 
 /* header */
@@ -88,7 +93,7 @@ th{
   z-index:2;
 }
 
-/* sticky nama (desktop only nanti) */
+/* sticky first column (desktop only behavior still ok) */
 th:first-child,
 td:first-child{
   text-align:left;
@@ -101,7 +106,7 @@ td:first-child{
   z-index:3;
 }
 
-/* HK */
+/* HK column */
 .hk{
   background:#fef08a;
   font-weight:bold;
@@ -110,18 +115,17 @@ td:first-child{
 /* ================= FOOTER ================= */
 
 .footer{
+  margin-top:auto; /* 🔥 ini kunci biar gak “nempel di tengah” */
   text-align:center;
   padding:20px;
   background:white;
   border-top:1px solid #e2e8f0;
-  font-size:14px;
 }
 
-/* ================= MOBILE FIX ================= */
+/* ================= MOBILE ================= */
 
 @media (max-width:768px){
 
-  /* disable sticky column di HP (biar gak bug overlap) */
   th:first-child,
   td:first-child{
     position:static;
@@ -130,10 +134,5 @@ td:first-child{
   th, td{
     font-size:12px;
     padding:6px;
-  }
-
-  /* pastikan scroll tetap jalan */
-  .table-container{
-    overflow:auto;
   }
 }
